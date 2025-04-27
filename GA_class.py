@@ -2,7 +2,7 @@ import random
 from collections import defaultdict
 
 class GA:
-    def __init__(self, num_of_teams, num_of_venues=None, population_size=100, generations=300, crossover_rate=0.8, mutation_rate=0.2, early_stopping=50):
+    def __init__(self, num_of_teams, num_of_venues=None, population_size=5, generations=5, crossover_rate=0.8, mutation_rate=0.2, early_stopping=50):
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = num_of_teams-1 if num_of_teams %2 ==0 else num_of_teams
@@ -60,7 +60,7 @@ class GA:
                     venue = random.choice(self.venues)
                     time_slot = random.randint(1, self.num_of_rounds *2) # *2 to provides more time slots and reduce double booking
                     schedule.append((match,venue,time_slot))
-        self.population.append(schedule)
+            self.population.append(schedule)
 
     
 
@@ -98,6 +98,6 @@ class GA:
 
 
 
-ga = GA(num_of_teams=8, population_size=5)
+ga = GA(num_of_teams=4, population_size=6)
 ga.display()
 
