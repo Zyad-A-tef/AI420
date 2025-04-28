@@ -2,10 +2,17 @@ import random
 from collections import defaultdict
 
 class GA:
-    def __init__(self, num_of_teams, num_of_venues=None, population_size=5, generations=5, crossover_rate=0.8, mutation_rate=0.2, early_stopping=50):
+    def __init__(self, num_of_teams, num_of_venues, population_size=5, generations=5, crossover_rate=0.8,
+                  mutation_rate=0.2, early_stopping=50, tournament_days=30, match_duration=2, daily_start_hr=8, daily_end_hr=22):
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = num_of_teams-1 if num_of_teams %2 ==0 else num_of_teams
+        self.daily_start = daily_start_hr
+        self.daily_end = daily_end_hr
+        self.match_duration = match_duration
+        self.available_hours_per_day = daily_end_hr - daily_start_hr
+        self.tournament_days = tournament_days
+        self.max_matches_per_day = self.available_hours_per_day//match_duration
         self.population_size = population_size
         self.generations = generations
         self.crossover_rate = crossover_rate
@@ -35,15 +42,15 @@ class GA:
     def generate_round_robin_fixtures(self):
         fixtures = [] # who plays vs who and when
         teams = self.teams.copy()
-        if len(self.teams) %2:
-            self.teams.append("dummy")
+        if len(teams) %2:
+            teams.append("dummy")
         
-        for _ in range(len(self.teams)-1):
+        for _ in range(len(teams)-1):
             round_matches = []
-            for i in range(len(self.teams)//2):
-                round_matches.append((self.teams[i], self.teams[len(self.teams)-1-i]))
+            for i in range(len(teams)//2):
+                round_matches.append((teams[i], teams[len(teams)-1-i]))
             fixtures.append(round_matches)
-            self.teams.insert(1, self.teams.pop()) 
+            teams.insert(1, teams.pop()) 
 
         return fixtures
         
@@ -57,9 +64,16 @@ class GA:
             schedule = []
             for round_matches in base_fixtures:
                 for match in round_matches:
+                    # add random day within duration
+                    day = random.randint(1, self.tournament_days)
+
+                    start_hour = random.randint(
+                        self.daily_start,
+                        self.daily_end - self.match_duration
+                    )
+
                     venue = random.choice(self.venues)
-                    time_slot = random.randint(1, self.num_of_rounds *2) # *2 to provides more time slots and reduce double booking
-                    schedule.append((match,venue,time_slot))
+                    schedule.append((match,venue,day,start_hour))
             self.population.append(schedule)
 
     
@@ -75,7 +89,7 @@ class GA:
     #         team_matches[team1].append((time,i))
     #         team_matches[team2].append((time,i))
     #         venue_schedule[venue].append((time,i))
-
+        
     #     for team, matches in team_matches.items():
     #         matches.sort()
     #         for i in range(1,len(matches)):
@@ -83,21 +97,29 @@ class GA:
     #             if time_diff < 2:
     #                 fitness += (2- time_diff) *10 # apply penalty
 
+    #     # double booking penalty
+    #     for venue, bookings in venue_schedule.items():
+    #         bookings.sort()
+    #         for i in range(1, len(bookings)):
+    #             if bookings[i][0] == bookings[i-1][0]:
+    #                 fitness +=20
+                    
+
     
 
 
-
-    
     def display(self):
         for i, schedule in enumerate(self.population):
             print(f"Schedule {i+1}\n")
-            for match, venue, time in schedule:
-                print(f"Match: {match[0]} vs {match[1]} || Venue : {venue} || Time Slot {time}")
+            for match, venue, day, start_hour in schedule:
+                print(f"Day {day}: Match: {match[0]} vs {match[1]} || Venue : {venue} || Start Time: {start_hour}:00")
             print("_" * 10)
 
 
 
 
-ga = GA(num_of_teams=4, population_size=6)
+ga = GA(num_of_teams=4, num_of_venues=5)
 ga.display()
+
+
 
