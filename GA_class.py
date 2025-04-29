@@ -3,16 +3,18 @@ from collections import defaultdict
 
 class GA:
     def __init__(self, num_of_teams, num_of_venues, population_size=5, generations=5, crossover_rate=0.8,
-                  mutation_rate=0.2, early_stopping=50, tournament_days=5, match_duration=2, daily_start_hr=8, daily_end_hr=22):
+                  mutation_rate=0.2, early_stopping=50, tournament_days=5, match_duration=2, daily_start_hr=8, daily_end_hr=23,
+                  max_matches_per_day=4,venue_rest=1):
         self.num_of_teams = num_of_teams
-        self.num_of_venues = num_of_venues if num_of_venues else max(2, num_of_teams//2)
-        self.num_of_rounds = num_of_teams-1 if num_of_teams %2 ==0 else num_of_teams
+        self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
+        self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
         self.daily_start = daily_start_hr
         self.daily_end = daily_end_hr
         self.match_duration = match_duration
         self.available_hours_per_day = daily_end_hr - daily_start_hr
         self.tournament_days = tournament_days
-        self.max_matches_per_day = self.available_hours_per_day//match_duration
+        self.venue_rest = venue_rest
+        self.max_matches_per_day = max_matches_per_day 
         self.population_size = population_size
         self.generations = generations
         self.crossover_rate = crossover_rate
@@ -27,30 +29,28 @@ class GA:
         self.create_teams_and_venues()
         self.initialize_population()
 
-
+    # 1 2 3 4 
+    # 1 2, 1 3, 1 4
 
     def create_teams_and_venues(self):
-        if self.num_of_teams % 2 != 0:
-            self.num_of_teams +=1
+        # if self.num_of_teams % 2 != 0:
+        #     self.num_of_teams +=1
         
-        self.teams = [f"Team {chr(65+i)}" for i in range(self.num_of_teams)]
-
-        self.venues = [f"Venue{i+1}" for i in range(self.num_of_venues)]
-
+        self.teams = [i for i in range(self.num_of_teams)]
+        self.venues = [i for i in range(self.num_of_venues)]
 
 
+
+    # return type list of tuple(size 2)
     def generate_round_robin_fixtures(self):
         fixtures = [] # who plays vs who and when
-        teams = self.teams.copy()
-        if len(teams) %2:
-            teams.append("dummy")
-        
-        for _ in range(len(teams)-1):
+
+        for _ in range(self.num_of_teams):
             round_matches = []
-            for i in range(len(teams)//2):
-                round_matches.append((teams[i], teams[len(teams)-1-i]))
+            for i in range(_+1, self.num_of_teams):
+                round_matches.append((self.teams[_], self.teams[i]))
+
             fixtures.append(round_matches)
-            teams.insert(1, teams.pop()) 
 
         return fixtures
         
@@ -62,6 +62,7 @@ class GA:
         
         for _ in range(self.population_size):
             schedule = []
+
             for round_matches in base_fixtures:
                 for match in round_matches:
                     # add random day within duration
@@ -74,6 +75,7 @@ class GA:
 
                     venue = random.choice(self.venues)
                     schedule.append((match,venue,day,start_hour))
+                    
             self.population.append(schedule)
 
     
@@ -87,7 +89,8 @@ class GA:
         
         for match, venue, day, start_hour in schedule:
             team1, team2 = match
-            end_hour = start_hour - self.match_duration
+            end_hour = start_hour + self.match_duration
+            ## [edit] plus not minus in logic
             day_counts[day] += 1
 
 
@@ -109,9 +112,10 @@ class GA:
 
 
             # venue double booking
-            for current_day, current_start, current_end in team_schedule[team1]:
+            for current_day, current_start, current_end in venue_schedule[venue]:
                 if day == current_day and not (start_hour >= current_end and end_hour <= current_start):
                     fitness +=40
+            ## [edit] correct venue_schedule[venue] from Team_scheduleas
 
             venue_schedule[venue].append((day, start_hour, end_hour))
 
@@ -124,6 +128,24 @@ class GA:
 
         return fitness
         
+
+    ## selection of Parents
+
+    def tournament_selection(self, population, k=3):
+
+        selected = random.sample(population, k)
+        best = min(selected, key=lambda ind: self.evaluate_fitness(ind)) 
+
+        return best
+
+    def roulette_wheel_selection(self, population):
+
+        fitnesses = [1 / (self.evaluate_fitness(ind) + 1e-6) for ind in population]
+        total = sum(fitnesses)
+        probability = [f / total for f in fitnesses]
+
+        return random.choices(population, weights=probability, k=1)[0]
+
 
 
 
@@ -140,10 +162,28 @@ class GA:
             print("-" * 20)
 
 
+ #### TEstinggggggg Selection
+
+    def test_selection_methods(self):
+
+        print("\nTournament Selection\n")
+        selected1 = self.tournament_selection(self.population, k=3)
+        for match in selected1:
+            print(match)
+
+        print("\n Roulette Wheel Selection \n")
+        selected2 = self.roulette_wheel_selection(self.population)
+        for match in selected2:
+            print(match)
 
 
-ga = GA(num_of_teams=2, num_of_venues=5)
-ga.display()
+
+
+
+ga = GA(num_of_teams=5, num_of_venues=2)
+ga.display() 
+ga.test_selection_methods()
+
 
 
 
