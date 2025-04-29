@@ -147,9 +147,34 @@ class GA:
         return random.choices(population, weights=probability, k=1)[0]
 
 
+    ## Crossover
+
+    # one point
+    def one_point_crossover(self, parent1, parent2):
+
+        point = random.randint(1, len(parent1) - 2)
+        child = parent1[:point] + parent2[point:]
+
+        return child
 
 
-    
+    # Uniform Cross
+
+    # [Observe that unifrom get offspring near to parent to seach more to make more diversity]
+    def uniform_crossover(self, parent1, parent2):
+        child = []
+        for gene1, gene2 in zip(parent1, parent2):
+            # Randomly select each field from one of the parents
+            match = gene1[0]  
+            venue = random.choice([gene1[1], gene2[1]])
+            day = random.choice([gene1[2], gene2[2]])
+            start_hour = random.choice([gene1[3], gene2[3]])
+            child.append((match, venue, day, start_hour))
+
+        return child
+
+
+   
 
 
     def display(self):
@@ -162,7 +187,7 @@ class GA:
             print("-" * 20)
 
 
- #### TEstinggggggg Selection
+ #### TEstinggggggg Selection of parent
 
     def test_selection_methods(self):
 
@@ -171,10 +196,32 @@ class GA:
         for match in selected1:
             print(match)
 
-        print("\n Roulette Wheel Selection \n")
+        print("\nRoulette Wheel Selection \n")
         selected2 = self.roulette_wheel_selection(self.population)
         for match in selected2:
             print(match)
+
+
+ #### TEstinggggggg Cross
+
+    def test_crossover(self):
+
+        parent1 = self.population[0]
+        parent2 = self.population[1]
+
+        print("\nParent 1:")
+        for gene in parent1: print(gene)
+        print("\nParent 2:")
+        for gene in parent2: print(gene)
+
+        print("\n Uniform Crossover \n")
+        child1 = self.uniform_crossover(parent1, parent2)
+        for gene in child1: print(gene)
+
+        print("\n One-Point Crossover \n")
+        child2 = self.one_point_crossover(parent1, parent2)
+        for gene in child2: print(gene)
+
 
 
 
@@ -183,6 +230,7 @@ class GA:
 ga = GA(num_of_teams=5, num_of_venues=2)
 ga.display() 
 ga.test_selection_methods()
+ga.test_crossover()
 
 
 
