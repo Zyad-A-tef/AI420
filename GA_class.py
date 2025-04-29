@@ -78,32 +78,39 @@ class GA:
 
     
 
-    # def evaluate_fitness(self, schedule):
-    #     fitness = 0
-    #     team_matches = defaultdict(list)
-    #     venue_schedule = defaultdict(list)
+    def evaluate_fitness(self, schedule):
+        fitness = 0
+        team_schedule = defaultdict(list)
+        venue_schedule = defaultdict(list)
 
-    #     # fair rest
-    #     for i, (match, venue, time) in enumerate(schedule):
-    #         team1, team2 = match
-    #         team_matches[team1].append((time,i))
-    #         team_matches[team2].append((time,i))
-    #         venue_schedule[venue].append((time,i))
         
-    #     for team, matches in team_matches.items():
-    #         matches.sort()
-    #         for i in range(1,len(matches)):
-    #             time_diff = matches[i][0] - matches[i-1][0]
-    #             if time_diff < 2:
-    #                 fitness += (2- time_diff) *10 # apply penalty
+        for match, venue, day, start_hour in schedule:
+            team1, team2 = match
+            end_hour = start_hour - self.match_duration
 
-    #     # double booking penalty
-    #     for venue, bookings in venue_schedule.items():
-    #         bookings.sort()
-    #         for i in range(1, len(bookings)):
-    #             if bookings[i][0] == bookings[i-1][0]:
-    #                 fitness +=20
-                    
+
+            # same team cant play more than one match/day 
+            for team in [team1, team2]:
+                if any(prev_day == day for prev_day, _, _ in team_schedule([team])):
+                    fitness +=100
+
+            # fair rest 
+            for team in [team1,team2]:
+                for prev_day, prev_start_hr, prev_end_hr in team_schedule[team]:
+                    rest_days = abs(day - prev_day)
+                    if rest_days < 3:
+                        fitness += (2 - rest_days) *30
+
+
+            team_schedule[team1].append ((day, start_hour, end_hour))
+            team_schedule[team2].append ((day, start_hour, end_hour))
+
+
+            # venue double booking
+        
+        
+
+
 
     
 
