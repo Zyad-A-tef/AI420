@@ -173,8 +173,31 @@ class GA:
 
         return child
 
+    def evolve(self):
+        for generation in range(self.generations):
+            new_population = []
 
-   
+
+            # Elitism
+            fitness_values = [self.evaluate_fitness(ind) for ind in self.population]
+            best_idx = min(range(len(fitness_values)), key=lambda i:fitness_values[i])
+            self.best_schedule = self.population[best_idx]
+            self.best_fitness = fitness_values[best_idx]
+            new_population.append(self.population[best_idx])
+            self.fitness_history.append(self.best_fitness)
+
+            #early stopping
+            if len(self.fitness_history) > self.early_stopping:
+                current_fitness = min(self.fitness_history[-self.early_stopping:])
+                if current_fitness >= self.best_fitness:
+                    print(f"Early stopping at generation {generation}. - due to no improvement")
+                    break
+
+
+
+
+
+        return  self.best_schedule
 
 
     def display(self):
@@ -227,10 +250,12 @@ class GA:
 
 
 
-ga = GA(num_of_teams=5, num_of_venues=2)
-ga.display() 
-ga.test_selection_methods()
-ga.test_crossover()
+ga = GA(num_of_teams=4, num_of_venues=2)
+best_schedule = ga.evolve()
+print(best_schedule)
+ga.display()
+# ga.test_selection_methods()
+# ga.test_crossover()
 
 
 
