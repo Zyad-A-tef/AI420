@@ -80,7 +80,7 @@ class GA:
 
     
 
-    def evaluate_fitness(self, schedule):
+    def fitness_function(self, schedule):
         fitness = 0
         team_schedule = defaultdict(list)
         venue_schedule = defaultdict(list)
@@ -134,13 +134,13 @@ class GA:
     def tournament_selection(self, population, k=3):
 
         selected = random.sample(population, k)
-        best = min(selected, key=lambda ind: self.evaluate_fitness(ind)) 
+        best = min(selected, key=lambda ind: self.fitness_function(ind))
 
         return best
 
     def roulette_wheel_selection(self, population):
 
-        fitnesses = [1 / (self.evaluate_fitness(ind) + 1e-6) for ind in population]
+        fitnesses = [1 / (self.fitness_function(ind) + 1e-6) for ind in population]
         total = sum(fitnesses)
         probability = [f / total for f in fitnesses]
 
@@ -200,11 +200,36 @@ class GA:
 
 
 
+    def evolve(self):
+        for generation in range(self.generations):
+            new_population = []
+
+
+            # Elitism
+            fitness_values = [self.fitness_function(ind) for ind in self.population]
+            best_idx = min(range(len(fitness_values)), key=lambda i:fitness_values[i])
+            self.best_schedule = self.population[best_idx]
+            self.best_fitness = fitness_values[best_idx]
+            new_population.append(self.population[best_idx])
+            self.fitness_history.append(self.best_fitness)
+
+            #early stopping
+            if len(self.fitness_history) > self.early_stopping:
+                current_fitness = min(self.fitness_history[-self.early_stopping:])
+                if current_fitness >= self.best_fitness:
+                    print(f"Early stopping at generation {generation}. - due to no improvement")
+                    break
+
+
+
+
+
+        return  self.best_schedule
 
 
     def display(self):
         for i, schedule in enumerate(self.population):
-            fitness = self.evaluate_fitness(schedule)
+            fitness = self.fitness_function(schedule)
             print(f"Schedule {i+1} (fitness: {fitness:.2f})")
             print("-"*20)
             for match, venue, day, start_hour in schedule:
@@ -269,11 +294,21 @@ class GA:
 
 
 
-ga = GA(num_of_teams=3, num_of_venues=1)
-ga.display() 
-ga.test_selection_methods()
-ga.test_crossover()
-ga.test_mutation()
+# ga = GA(num_of_teams=3, num_of_venues=1)
+# ga.display() 
+# ga.test_selection_methods()
+# ga.test_crossover()
+# ga.test_mutation()
+
+
+
+
+ga = GA(num_of_teams=4, num_of_venues=2)
+best_schedule = ga.evolve()
+print(best_schedule)
+ga.display()
+# ga.test_selection_methods()
+# ga.test_crossover()
 
 
 
