@@ -80,7 +80,7 @@ class GA:
 
     
 
-    def evaluate_fitness(self, schedule):
+    def fitness_function(self, schedule):
         fitness = 0
         team_schedule = defaultdict(list)
         venue_schedule = defaultdict(list)
@@ -134,13 +134,13 @@ class GA:
     def tournament_selection(self, population, k=3):
 
         selected = random.sample(population, k)
-        best = min(selected, key=lambda ind: self.evaluate_fitness(ind)) 
+        best = min(selected, key=lambda ind: self.fitness_function(ind))
 
         return best
 
     def roulette_wheel_selection(self, population):
 
-        fitnesses = [1 / (self.evaluate_fitness(ind) + 1e-6) for ind in population]
+        fitnesses = [1 / (self.fitness_function(ind) + 1e-6) for ind in population]
         total = sum(fitnesses)
         probability = [f / total for f in fitnesses]
 
@@ -179,7 +179,7 @@ class GA:
 
 
             # Elitism
-            fitness_values = [self.evaluate_fitness(ind) for ind in self.population]
+            fitness_values = [self.fitness_function(ind) for ind in self.population]
             best_idx = min(range(len(fitness_values)), key=lambda i:fitness_values[i])
             self.best_schedule = self.population[best_idx]
             self.best_fitness = fitness_values[best_idx]
@@ -202,7 +202,7 @@ class GA:
 
     def display(self):
         for i, schedule in enumerate(self.population):
-            fitness = self.evaluate_fitness(schedule)
+            fitness = self.fitness_function(schedule)
             print(f"Schedule {i+1} (fitness: {fitness:.2f})")
             print("-"*20)
             for match, venue, day, start_hour in schedule:
