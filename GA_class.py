@@ -129,7 +129,7 @@ class GA:
         return fitness
         
 
-    ## selection of Parents
+    ######### selection of Parents
 
     def tournament_selection(self, population, k=3):
 
@@ -147,7 +147,7 @@ class GA:
         return random.choices(population, weights=probability, k=1)[0]
 
 
-    ## Crossover
+    ######### Crossover
 
     # one point
     def one_point_crossover(self, parent1, parent2):
@@ -175,6 +175,31 @@ class GA:
 
 
    
+    ######### Mutation
+    
+    # Swap Mutation
+
+    def swap_mutation(self, individual):
+        i, j = random.sample(range(len(individual)), 2)
+        individual[i], individual[j] = individual[j], individual[i]
+
+    # Reschedule Mutation
+
+    def reschedule_mutation(self, individual):
+        index = random.randint(0, len(individual) - 1)
+        match, _, _, _ = individual[index]
+
+        new_venue = random.choice(self.venues)
+        new_day = random.randint(1, self.tournament_days)
+        new_start_hour = random.randint(self.daily_start, self.daily_end - self.match_duration)
+
+        individual[index] = (match, new_venue, new_day, new_start_hour)
+
+
+
+
+
+
 
 
     def display(self):
@@ -223,14 +248,32 @@ class GA:
         for gene in child2: print(gene)
 
 
+ #### TEstinggggggg Cross
+    def test_mutation(self):
+        print("\n🧪 Testing Mutation Methods")
+
+        original = self.population[0].copy()
+        print("\nOriginal Individual:")
+        for gene in original: print(gene)
+
+        mutated_swap = original.copy()
+        self.swap_mutation(mutated_swap)
+        print("\n--- After Swap Mutation ---")
+        for gene in mutated_swap: print(gene)
+
+        mutated_reschedule = original.copy()
+        self.reschedule_mutation(mutated_reschedule)
+        print("\n--- After Reschedule Mutation ---")
+        for gene in mutated_reschedule: print(gene)
 
 
 
 
-ga = GA(num_of_teams=5, num_of_venues=2)
+ga = GA(num_of_teams=3, num_of_venues=1)
 ga.display() 
 ga.test_selection_methods()
 ga.test_crossover()
+ga.test_mutation()
 
 
 
