@@ -2,9 +2,9 @@ import random
 from collections import defaultdict
 
 class GA:
-    def __init__(self, num_of_teams, num_of_venues, population_size=5, generations=5, crossover_rate=0.8,
+    def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=300, crossover_rate=0.8,
                   mutation_rate=0.2, early_stopping=50, tournament_days=5, match_duration=2, daily_start_hr=8, daily_end_hr=23,
-                  max_matches_per_day=4,venue_rest=1):
+                  max_matches_per_day=4,venue_rest=1, selection_method="tournament", crossover_method="uniform", mutation_method="swap"):
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
@@ -14,28 +14,28 @@ class GA:
         self.available_hours_per_day = daily_end_hr - daily_start_hr
         self.tournament_days = tournament_days
         self.venue_rest = venue_rest
-        self.max_matches_per_day = max_matches_per_day 
+        self.max_matches_per_day = max_matches_per_day
         self.population_size = population_size
         self.generations = generations
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
         self.early_stopping = early_stopping
+        self.selection_method = selection_method
+        self.crossover_method = crossover_method
+        self.mutation_method = mutation_method
         self.teams = []
         self.venues = []
         self.population = []
-        self.fitness_history= []
-        self.best_schedule = None
-        self.best_fitness = float('inf')
         self.create_teams_and_venues()
         self.initialize_population()
 
-    # 1 2 3 4 
+    # 1 2 3 4
     # 1 2, 1 3, 1 4
 
     def create_teams_and_venues(self):
         # if self.num_of_teams % 2 != 0:
         #     self.num_of_teams +=1
-        
+
         self.teams = [i for i in range(self.num_of_teams)]
         self.venues = [i for i in range(self.num_of_venues)]
 
@@ -53,13 +53,13 @@ class GA:
             fixtures.append(round_matches)
 
         return fixtures
-        
 
-    
+
+
     def initialize_population(self):
         self.population = []
         base_fixtures = self.generate_round_robin_fixtures()
-        
+
         for _ in range(self.population_size):
             schedule = []
 
@@ -75,10 +75,10 @@ class GA:
 
                     venue = random.choice(self.venues)
                     schedule.append((match,venue,day,start_hour))
-                    
+
             self.population.append(schedule)
 
-    
+
 
     def fitness_function(self, schedule):
         fitness = 0
@@ -86,7 +86,7 @@ class GA:
         venue_schedule = defaultdict(list)
         day_counts = defaultdict(int)
 
-        
+
         for match, venue, day, start_hour in schedule:
             team1, team2 = match
             end_hour = start_hour + self.match_duration
@@ -94,17 +94,17 @@ class GA:
             day_counts[day] += 1
 
 
-            # same team cant play more than one match/day 
+            # same team cant play more than one match/day
             for team in [team1, team2]:
                 if any(prev_day == day for prev_day, _, _ in team_schedule[team]):
-                    fitness +=100
+                    fitness +=50
 
-            # fair rest 
+            # fair rest
             for team in [team1,team2]:
                 for prev_day, prev_start_hr, prev_end_hr in team_schedule[team]:
                     rest_days = abs(day - prev_day)
                     if rest_days < 3:
-                        fitness += (2 - rest_days) *30
+                        fitness += (2 - rest_days) *20
 
 
             team_schedule[team1].append ((day, start_hour, end_hour))
@@ -113,7 +113,7 @@ class GA:
 
             # venue double booking
             for current_day, current_start, current_end in venue_schedule[venue]:
-                if day == current_day and not (start_hour >= current_end and end_hour <= current_start):
+                if day == current_day and not (end_hour <= current_start and start_hour >= current_end):
                     fitness +=40
             ## [edit] correct venue_schedule[venue] from Team_scheduleas
 
@@ -127,7 +127,7 @@ class GA:
                 fitness += var *10
 
         return fitness
-        
+
 
     ######### selection of Parents
 
@@ -165,7 +165,7 @@ class GA:
         child = []
         for gene1, gene2 in zip(parent1, parent2):
             # Randomly select each field from one of the parents
-            match = gene1[0]  
+            match = gene1[0]
             venue = random.choice([gene1[1], gene2[1]])
             day = random.choice([gene1[2], gene2[2]])
             start_hour = random.choice([gene1[3], gene2[3]])
@@ -174,9 +174,9 @@ class GA:
         return child
 
 
-   
+
     ######### Mutation
-    
+
     # Swap Mutation
 
     def swap_mutation(self, individual):
@@ -196,35 +196,91 @@ class GA:
         individual[index] = (match, new_venue, new_day, new_start_hour)
 
 
-
-
-
-
     def evolve(self):
+        if not self.population:
+            raise ValueError("Population failed to initialize")
+
+        best_fitness = float('inf')
+        best_schedule = None
+        fitness_hist = []
+        generation_found = 0
+        no_improv_counter = 0
+
         for generation in range(self.generations):
             new_population = []
 
+            # Evaluation
+            fitness_values = [self.fitness_function(ind) for ind in self.population]
+            best_idx = min(range(len(fitness_values)), key=lambda i: fitness_values[i])
+            current_best_schedule = self.population[best_idx]
+            current_best_fitness = fitness_values[best_idx]
+
+            # Track best solution
+            if current_best_fitness < best_fitness:
+                best_fitness = current_best_fitness
+                best_schedule = current_best_schedule.copy()
+                generation_found = generation + 1
+                no_improv_counter = 0
+            else:
+                no_improv_counter += 1
+
+            fitness_hist.append(current_best_fitness)
 
             # Elitism
-            fitness_values = [self.fitness_function(ind) for ind in self.population]
-            best_idx = min(range(len(fitness_values)), key=lambda i:fitness_values[i])
-            self.best_schedule = self.population[best_idx]
-            self.best_fitness = fitness_values[best_idx]
-            new_population.append(self.population[best_idx])
-            self.fitness_history.append(self.best_fitness)
+            # new_population.append(current_best_schedule)
 
-            #early stopping
-            if len(self.fitness_history) > self.early_stopping:
-                current_fitness = min(self.fitness_history[-self.early_stopping:])
-                if current_fitness >= self.best_fitness:
-                    print(f"Early stopping at generation {generation}. - due to no improvement")
-                    break
+            #controlled Elitism
+            if random.random() < 0.5:
+                new_population.append(current_best_schedule)
 
+            print(f"Generation {generation + 1}: Best fitness: {current_best_fitness:.2f}")
+
+            # Early stopping
+            if no_improv_counter >= self.early_stopping:
+                print(f"Early stopping at generation {generation + 1} - no improvement")
+                break
 
 
+            #adaptive mutation rate
+            # if no_improv_counter > 10:
+            #     self.mutation_rate = min(self.mutation_rate * 1.1, 0.5)
+            # else:
+            #     self.mutation_rate = min(self.mutation_rate * 0.9, 0.01)
 
 
-        return  self.best_schedule
+            while len(new_population) < self.population_size:
+                # Selection
+                parent1 = (self.tournament_selection if self.selection_method == "tournament"
+                           else self.roulette_wheel_selection)(self.population)
+                parent2 = (self.tournament_selection if self.selection_method == "tournament"
+                           else self.roulette_wheel_selection)(self.population)
+
+                # Crossover
+                if random.random() < self.crossover_rate:
+                    if self.crossover_method == "uniform":
+                        child1 = self.uniform_crossover(parent1, parent2)
+                        child2 = self.uniform_crossover(parent2, parent1)
+                    else:
+                        child1 = self.one_point_crossover(parent1, parent2)
+                        child2 = self.one_point_crossover(parent2, parent1)
+                else:
+                    child1, child2 = parent1.copy(), parent2.copy()
+
+                # Mutation
+                for child in [child1, child2]:
+                    if random.random() < self.mutation_rate:
+                        (self.swap_mutation if self.mutation_method == "swap"
+                         else self.reschedule_mutation)(child)
+
+                new_population.extend([child1, child2])
+
+            self.population = new_population[:self.population_size]
+
+        return best_schedule, best_fitness, generation_found
+
+
+
+
 
 
     def display(self):
@@ -292,23 +348,14 @@ class GA:
         for gene in mutated_reschedule: print(gene)
 
 
+#  TODO: solve the problem of high convergence
 
-
-# ga = GA(num_of_teams=3, num_of_venues=1)
-# ga.display() 
-# ga.test_selection_methods()
-# ga.test_crossover()
-# ga.test_mutation()
-
-
-
-
-ga = GA(num_of_teams=4, num_of_venues=2)
-best_schedule = ga.evolve()
-print(best_schedule)
+ga = GA(num_of_teams=10, num_of_venues=3)
 ga.display()
+schedule, fitness, gen = ga.evolve()
 # ga.test_selection_methods()
 # ga.test_crossover()
+# ga.test_mutation
 
 
 
