@@ -5,33 +5,49 @@ from collections import defaultdict
 class GA:
     def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=300, crossover_rate=0.8,
                   mutation_rate=0.2, early_stopping=50, tournament_days=5, match_duration=2, daily_start_hr=8, daily_end_hr=23,
-                  max_matches_per_day=4,venue_rest=1, selection_method="tournament", crossover_method="uniform", mutation_method="swap"):
+                  max_matches_per_day=4,venue_rest=1, 
+                  selection_method="tournament", 
+                  crossover_method="uniform", 
+                  mutation_method="swap",
+                  survivor_method="steady-state"):
+        
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
+        
         self.daily_start = daily_start_hr
         self.daily_end = daily_end_hr
+        
         self.match_duration = match_duration
         self.available_hours_per_day = daily_end_hr - daily_start_hr
         self.tournament_days = tournament_days
+        
         self.venue_rest = venue_rest
         self.max_matches_per_day = max_matches_per_day
+        
         self.population_size = population_size
         self.generations = generations
+        
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
+
         self.early_stopping = early_stopping
+
         self.selection_method = selection_method
         self.crossover_method = crossover_method
         self.mutation_method = mutation_method
+        self.survivor_method = survivor_method
+
         self.teams = []
         self.venues = []
         self.population = []
+        
         self.create_teams_and_venues()
         self.initialize_population()
 
         self.prepare_teams_data()
         self.prepare_venues_data()
+
     
     # Function to prepare teams data from teams saved data
     def prepare_teams_data(self, json_file: str = 'champions_league_teams.json'):
@@ -223,6 +239,28 @@ class GA:
 
         individual[index] = (match, new_venue, new_day, new_start_hour)
 
+    def survivor_selection(self, population, offspring):
+        
+        combined = population + offspring
+        
+        if self.survivor_method == "elitism":
+            # Keep top-N best individuals
+            combined.sort(key = lambda ind: self.fitness_function(ind))
+            return combined[:self.population_size]
+            
+        elif self.survivor_method == "generational":
+            # Replace entire population with offspring
+            return offspring[:self.population_size]
+            
+        elif self.survivor_method == "steady-state":
+            # Replace worst individuals in population with best offspring
+            population.sort(key = lambda ind: self.fitness_function(ind), reverse=True)
+            offspring.sort(key = lambda ind: self.fitness_function(ind))
+            return population[:-len(offspring)] + offspring
+            
+        else:  # Default to (μ + λ) selection
+            combined.sort(key=lambda ind: self.fitness_function(ind))
+            return combined[:self.population_size]
 
     def evolve(self):
         if not self.population:
@@ -302,7 +340,9 @@ class GA:
 
                 new_population.extend([child1, child2])
 
-            self.population = new_population[:self.population_size]
+            # Survivor selection
+            self.population = self.survivor_selection(self.population, new_population[:self.population_size])
+
 
         return best_schedule, best_fitness, generation_found
 
@@ -319,6 +359,7 @@ class GA:
             for match, venue, day, start_hour in schedule:
                 print(f"Day {day}: Match: {match[0]} vs {match[1]} at {venue} ({start_hour}:00)")
             print("-" * 20)
+
 
     def display_with_names(self):
         for i, schedule in enumerate(self.population):
