@@ -3,8 +3,8 @@ from collections import defaultdict
 
 class GA:
     def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=300, crossover_rate=0.8,
-                  mutation_rate=0.2, early_stopping=50, tournament_days=5, match_duration=2, daily_start_hr=8, daily_end_hr=23,
-                  max_matches_per_day=4,venue_rest=1, selection_method="tournament", crossover_method="uniform", mutation_method="swap"):
+                  mutation_rate=0.2, early_stopping=50, tournament_days=30, match_duration=2, daily_start_hr=8, daily_end_hr=23,
+                  max_matches_per_day=5,venue_rest=1, selection_method="tournament", crossover_method="uniform", mutation_method="swap"):
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
@@ -124,7 +124,7 @@ class GA:
             if len(day_counts) >1:
                 avg_matches = len(schedule)/ len(day_counts)
                 var = sum((count - avg_matches)**2 for count in day_counts.values())/ len(day_counts)
-                fitness += var *10
+                fitness += var *5
 
         return fitness
 
@@ -230,7 +230,7 @@ class GA:
             # new_population.append(current_best_schedule)
 
             #controlled Elitism
-            if random.random() < 0.5:
+            if random.random() < 0.3:
                 new_population.append(current_best_schedule)
 
             print(f"Generation {generation + 1}: Best fitness: {current_best_fitness:.2f}")
@@ -350,7 +350,7 @@ class GA:
 
 #  TODO: solve the problem of high convergence
 
-ga = GA(num_of_teams=10, num_of_venues=3)
+ga = GA(num_of_teams=8, num_of_venues=3)
 ga.display()
 schedule, fitness, gen = ga.evolve()
 # ga.test_selection_methods()
