@@ -1,3 +1,4 @@
+import json
 import random
 from collections import defaultdict
 
@@ -29,14 +30,41 @@ class GA:
         self.create_teams_and_venues()
         self.initialize_population()
 
-    # 1 2 3 4
-    # 1 2, 1 3, 1 4
+        self.prepare_teams_data()
+        self.prepare_venues_data()
+    
+    # Function to prepare teams data from teams saved data
+    def prepare_teams_data(self, json_file: str = 'champions_league_teams.json'):
+        with open(json_file, 'r') as f:
+            all_teams = json.load(f)
+        
+        # Convert values to a list (ignore IDs)
+        team_names = list(all_teams.values())
+
+        # Validate input
+        if self.num_of_teams > len(all_teams):
+            raise ValueError(f"Maximum teams available is {len(all_teams)}")
+        
+        self.teams_data = random.sample(team_names, self.num_of_teams)
+
+    # Function to prepare venues data from venues saved data
+    def prepare_venues_data(self, json_file: str = 'football_venues_full.json'):
+        with open(json_file, 'r') as f:
+            all_venues = json.load(f)
+        
+        venue_names = list(all_venues.values())  # Full dictionaries
+        venue_names = [venue["name"] for venue in all_venues.values()]  # Just names
+
+
+        # Validate input
+        if self.num_of_venues > len(all_venues):
+            raise ValueError(f"Maximum venues available is {len(all_venues)}")
+        
+        self.venues_data = random.sample(venue_names, self.num_of_venues)
 
     def create_teams_and_venues(self):
-        # if self.num_of_teams % 2 != 0:
-        #     self.num_of_teams +=1
 
-        self.teams = [i for i in range(self.num_of_teams)]
+        self.teams  = [i for i in range(self.num_of_teams)]
         self.venues = [i for i in range(self.num_of_venues)]
 
 
@@ -292,6 +320,15 @@ class GA:
                 print(f"Day {day}: Match: {match[0]} vs {match[1]} at {venue} ({start_hour}:00)")
             print("-" * 20)
 
+    def display_with_names(self):
+        for i, schedule in enumerate(self.population):
+            fitness = self.fitness_function(schedule)
+            print(f"Schedule {i+1} (fitness: {fitness:.2f})")
+            print("-"*20)
+            for match, venue, day, start_hour in schedule:
+                print(f"Day {day}: Match: {self.get_team_name(match[0])} vs {self.get_team_name(match[1])} at {self.get_venue_name(venue)} ({start_hour}:00)")
+            print("-" * 20)
+
 
  #### TEstinggggggg Selection of parent
 
@@ -347,12 +384,35 @@ class GA:
         print("\n--- After Reschedule Mutation ---")
         for gene in mutated_reschedule: print(gene)
 
+    # This function retrieves the team IDs for the two teams scheduled to play in a given match_id
+    def get_match_teams(self, match_id):
+
+        if(match_id >= self.num_of_rounds):
+            raise ValueError(f"Maximum match_id is {self.num_of_rounds -1}")
+
+        now = 0
+        for i in range(self.num_of_teams):
+            for j in range(i+1, self.num_of_teams):
+                if(match_id == now):
+                    return (i, j)
+                else:
+                    now = now + 1
+                    
+    # Function to get the name of a team by it's ID
+    def get_team_name(self, team_id):
+        return self.teams_data[team_id]
+    
+    # Function to get the name of a venue by it's ID
+    def get_venue_name(self, venue_id = 0):
+        return self.venues_data[venue_id]
 
 #  TODO: solve the problem of high convergence
 
 ga = GA(num_of_teams=8, num_of_venues=3)
 ga.display()
 schedule, fitness, gen = ga.evolve()
+
+# print(ga.get_team_name(ga.get_teams_from_match(10)[0]) + " VS " + ga.get_team_name(ga.get_teams_from_match(10)[1]))
 # ga.test_selection_methods()
 # ga.test_crossover()
 # ga.test_mutation
