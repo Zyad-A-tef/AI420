@@ -1,0 +1,182 @@
+{
+  "0": {
+    "name": "Wembley Stadium",
+    "city": "London",
+    "country": "England",
+    "capacity": 90000
+  },
+  "1": {
+    "name": "Camp Nou",
+    "city": "Barcelona",
+    "country": "Spain",
+    "capacity": 99354
+  },
+  "2": {
+    "name": "Allianz Arena",
+    "city": "Munich",
+    "country": "Germany",
+    "capacity": 75000
+  },
+  "3": {
+    "name": "San Siro",
+    "city": "Milan",
+    "country": "Italy",
+    "capacity": 80018
+  },
+  "4": {
+    "name": "Santiago Bernab\u00e9u",
+    "city": "Madrid",
+    "country": "Spain",
+    "capacity": 81044
+  },
+  "5": {
+    "name": "Old Trafford",
+    "city": "Manchester",
+    "country": "England",
+    "capacity": 74310
+  },
+  "6": {
+    "name": "Parc des Princes",
+    "city": "Paris",
+    "country": "France",
+    "capacity": 48712
+  },
+  "7": {
+    "name": "Signal Iduna Park",
+    "city": "Dortmund",
+    "country": "Germany",
+    "capacity": 81365
+  },
+  "8": {
+    "name": "Stadio Olimpico",
+    "city": "Rome",
+    "country": "Italy",
+    "capacity": 70634
+  },
+  "9": {
+    "name": "Est\u00e1dio da Luz",
+    "city": "Lisbon",
+    "country": "Portugal",
+    "capacity": 64400
+  },
+  "10": {
+    "name": "Emirates Stadium",
+    "city": "London",
+    "country": "England",
+    "capacity": 60704
+  },
+  "11": {
+    "name": "Anfield",
+    "city": "Liverpool",
+    "country": "England",
+    "capacity": 53394
+  },
+  "12": {
+    "name": "Etihad Stadium",
+    "city": "Manchester",
+    "country": "England",
+    "capacity": 55017
+  },
+  "13": {
+    "name": "Stamford Bridge",
+    "city": "London",
+    "country": "England",
+    "capacity": 40343
+  },
+  "14": {
+    "name": "Tottenham Hotspur Stadium",
+    "city": "London",
+    "country": "England",
+    "capacity": 62850
+  },
+  "15": {
+    "name": "Olympiastadion Berlin",
+    "city": "Berlin",
+    "country": "Germany",
+    "capacity": 74649
+  },
+  "16": {
+    "name": "Stade V\u00e9lodrome",
+    "city": "Marseille",
+    "country": "France",
+    "capacity": 67394
+  },
+  "17": {
+    "name": "Johan Cruyff Arena",
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "capacity": 55865
+  },
+  "18": {
+    "name": "Estadio do Drag\u00e3o",
+    "city": "Porto",
+    "country": "Portugal",
+    "capacity": 50833
+  },
+  "19": {
+    "name": "Estadio Benito Villamar\u00edn",
+    "city": "Seville",
+    "country": "Spain",
+    "capacity": 60721
+  },
+  "20": {
+    "name": "Stadio Diego Armando Maradona",
+    "city": "Naples",
+    "country": "Italy",
+    "capacity": 54726
+  },
+  "21": {
+    "name": "Stade Pierre-Mauroy",
+    "city": "Lille",
+    "country": "France",
+    "capacity": 50083
+  },
+  "22": {
+    "name": "Red Bull Arena",
+    "city": "Leipzig",
+    "country": "Germany",
+    "capacity": 47069
+  },
+  "23": {
+    "name": "Estadio de la Cer\u00e1mica",
+    "city": "Villarreal",
+    "country": "Spain",
+    "capacity": 23500
+  },
+  "24": {
+    "name": "Stadio Artemio Franchi",
+    "city": "Florence",
+    "country": "Italy",
+    "capacity": 43147
+  },
+  "25": {
+    "name": "Estadio Ram\u00f3n S\u00e1nchez-Pizju\u00e1n",
+    "city": "Seville",
+    "country": "Spain",
+    "capacity": 43883
+  },
+  "26": {
+    "name": "Stade de la Meinau",
+    "city": "Strasbourg",
+    "country": "France",
+    "capacity": 26109
+  },
+  "27": {
+    "name": "Stadio Luigi Ferraris",
+    "city": "Genoa",
+    "country": "Italy",
+    "capacity": 36599
+  },
+  "28": {
+    "name": "Estadi Mallorca Son Moix",
+    "city": "Palma",
+    "country": "Spain",
+    "capacity": 23142
+  },
+  "29": {
+    "name": "Volksparkstadion",
+    "city": "Hamburg",
+    "country": "Germany",
+    "capacity": 57000
+  }
+}
