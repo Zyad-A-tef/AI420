@@ -3,8 +3,8 @@ import random
 from collections import defaultdict
 
 class GA:
-    def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=300, crossover_rate=0.8,
-                  mutation_rate=0.2, early_stopping=50, tournament_days=30, match_duration=2, daily_start_hr=8, daily_end_hr=23,
+    def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=200, crossover_rate=0.8,
+                  mutation_rate=0.3, early_stopping=50, tournament_days=30, match_duration=2, daily_start_hr=8, daily_end_hr=23,
                   max_matches_per_day=4,venue_rest=1, 
                   selection_method="tournament", 
                   crossover_method="uniform", 
@@ -12,6 +12,9 @@ class GA:
                   survivor_method="steady-state",
                   random_seed = None):
         
+        self.num_islands = 4
+        self.migration_rate = 0.4  # 10% of population migrates
+        self.migration_interval = 20  # every N generations
 
         ## added a random seed to ensure reproducible results every time
         if random_seed is not None:
@@ -129,7 +132,23 @@ class GA:
 
             self.population.append(schedule)
 
+    ### Diversity Technqies (island split)        
+    def split_into_islands(self, population):
+        island_size = len(population) // self.num_islands
+        return [population[i*island_size:(i+1)*island_size] for i in range(self.num_islands)]
 
+    def migrate_islands(self, islands):
+        for i in range(len(islands)):
+            source = islands[i]
+            target = islands[(i + 1) % len(islands)]
+
+            num_migrants = max(1, int(len(source) * self.migration_rate))
+            migrants = random.sample(source, num_migrants)
+
+            # Replace weakest in target
+            target.sort(key=lambda ind: self.fitness_function(ind), reverse=True)
+            target[-num_migrants:] = migrants
+            
 
     def fitness_function(self, schedule):
         fitness = 0
@@ -175,7 +194,7 @@ class GA:
             if len(day_counts) >1:
                 avg_matches = len(schedule)/ len(day_counts)
                 var = sum((count - avg_matches)**2 for count in day_counts.values())/ len(day_counts)
-                fitness += var *5
+                fitness += var *4
 
         return fitness
 
@@ -294,95 +313,172 @@ class GA:
 
         return sorted_schedule
 
+    # def evolve(self):
+    #     if not self.population:
+    #         raise ValueError("Population failed to initialize")
+
+    #     best_fitness = float('inf')
+    #     best_schedule = None
+    #     # fitness_hist = []
+    #     generation_found = 0
+    #     no_improv_counter = 0
+
+    #     for generation in range(self.generations):
+    #         new_population = []
+
+    #         # Evaluation
+    #         fitness_values = [self.fitness_function(ind) for ind in self.population]
+    #         best_idx = min(range(len(fitness_values)), key=lambda i: fitness_values[i])
+    #         current_best_schedule = self.population[best_idx]
+    #         current_best_fitness = fitness_values[best_idx]
+
+    #         # Track best solution
+    #         if current_best_fitness < best_fitness:
+    #             best_fitness = current_best_fitness
+    #             best_schedule = current_best_schedule.copy()
+    #             generation_found = generation + 1
+    #             no_improv_counter = 0
+    #         else:
+    #             no_improv_counter += 1
+
+    #         self.fitness_history.append(current_best_fitness)
+
+    #         # Elitism
+    #         # new_population.append(current_best_schedule)
+
+    #         #controlled Elitism
+    #         # if random.random() < 0.5:
+    #         #     new_population.append(current_best_schedule)
+
+    #         print(f"Generation {generation + 1}: Best fitness: {current_best_fitness:.2f}")
+
+    #         # Early stopping
+    #         if no_improv_counter >= self.early_stopping:
+    #             print(f"Early stopping at generation {generation + 1} - no improvement")
+    #             break
+
+
+    #         #adaptive mutation rate
+    #         # if no_improv_counter > 10:
+    #         #     self.mutation_rate = min(self.mutation_rate * 1.1, 0.5)
+    #         # else:
+    #         #     self.mutation_rate = min(self.mutation_rate * 0.9, 0.01)
+
+
+    #         while len(new_population) < self.population_size:
+    #             # Selection
+    #             parent1 = (self.tournament_selection if self.selection_method == "tournament"
+    #                        else self.roulette_wheel_selection)(self.population)
+    #             parent2 = (self.tournament_selection if self.selection_method == "tournament"
+    #                        else self.roulette_wheel_selection)(self.population)
+
+    #             # Crossover
+    #             if random.random() < self.crossover_rate:
+    #                 if self.crossover_method == "uniform":
+    #                     child1 = self.uniform_crossover(parent1, parent2)
+    #                     child2 = self.uniform_crossover(parent2, parent1)
+    #                 else:
+    #                     child1 = self.one_point_crossover(parent1, parent2)
+    #                     child2 = self.one_point_crossover(parent2, parent1)
+    #             else:
+    #                 child1, child2 = parent1.copy(), parent2.copy()
+
+    #             # Mutation
+    #             for child in [child1, child2]:
+    #                 if random.random() < self.mutation_rate:
+    #                     (self.swap_mutation if self.mutation_method == "swap"
+    #                      else self.reschedule_mutation)(child)
+
+    #             new_population.extend([child1, child2])
+
+    #         # Survivor selection
+    #         self.population = self.survivor_selection(self.population, new_population[:self.population_size])
+
+
+
+    #         # Sort and decode the best schedule
+
+    #         decoded_schedule = self.DecodeToNames(best_schedule)
+
+
+
+
+    #     return decoded_schedule, best_fitness, generation_found
+
     def evolve(self):
         if not self.population:
             raise ValueError("Population failed to initialize")
 
+        islands = self.split_into_islands(self.population)
         best_fitness = float('inf')
         best_schedule = None
-        # fitness_hist = []
         generation_found = 0
         no_improv_counter = 0
 
-        for generation in range(self.generations):
-            new_population = []
+        for generation in range(1, self.generations + 1):
+            new_islands = []
 
-            # Evaluation
-            fitness_values = [self.fitness_function(ind) for ind in self.population]
+            for island in islands:
+                new_population = []
+
+                while len(new_population) < len(island):
+                    # Selection
+                    select = self.tournament_selection if self.selection_method == "tournament" else self.roulette_wheel_selection
+                    parent1 = select(island)
+                    parent2 = select(island)
+
+                    # Crossover
+                    if random.random() < self.crossover_rate:
+                        if self.crossover_method == "one-point":
+                            child = self.one_point_crossover(parent1, parent2)
+                        else:  # uniform
+                            child = self.uniform_crossover(parent1, parent2)
+                    else:
+                        child = parent1.copy()
+
+                    # Mutation
+                    if random.random() < self.mutation_rate:
+                        if self.mutation_method == "swap":
+                            self.swap_mutation(child)
+                        else:  # reschedule
+                            self.reschedule_mutation(child)
+
+                    new_population.append(child)
+
+                # Survivor selection
+                island = self.survivor_selection(island, new_population)
+                new_islands.append(island)
+
+            islands = new_islands
+
+            # Migration
+            if generation % self.migration_interval == 0:
+                self.migrate_islands(islands)
+
+            # Evaluate best across all islands
+            flat_population = [ind for island in islands for ind in island]
+            fitness_values = [self.fitness_function(ind) for ind in flat_population]
             best_idx = min(range(len(fitness_values)), key=lambda i: fitness_values[i])
-            current_best_schedule = self.population[best_idx]
+            current_best_schedule = flat_population[best_idx]
             current_best_fitness = fitness_values[best_idx]
 
-            # Track best solution
             if current_best_fitness < best_fitness:
                 best_fitness = current_best_fitness
                 best_schedule = current_best_schedule.copy()
-                generation_found = generation + 1
+                generation_found = generation
                 no_improv_counter = 0
             else:
                 no_improv_counter += 1
 
-            self.fitness_history.append(current_best_fitness)
+            self.fitness_history.append(best_fitness)
+            print(f"Generation {generation}: Best Fitness = {best_fitness:.2f}")
 
-            # Elitism
-            # new_population.append(current_best_schedule)
-
-            #controlled Elitism
-            # if random.random() < 0.5:
-            #     new_population.append(current_best_schedule)
-
-            print(f"Generation {generation + 1}: Best fitness: {current_best_fitness:.2f}")
-
-            # Early stopping
             if no_improv_counter >= self.early_stopping:
-                print(f"Early stopping at generation {generation + 1} - no improvement")
+                print(f"Early stopping at generation {generation} (no improvement)")
                 break
 
-
-            #adaptive mutation rate
-            # if no_improv_counter > 10:
-            #     self.mutation_rate = min(self.mutation_rate * 1.1, 0.5)
-            # else:
-            #     self.mutation_rate = min(self.mutation_rate * 0.9, 0.01)
-
-
-            while len(new_population) < self.population_size:
-                # Selection
-                parent1 = (self.tournament_selection if self.selection_method == "tournament"
-                           else self.roulette_wheel_selection)(self.population)
-                parent2 = (self.tournament_selection if self.selection_method == "tournament"
-                           else self.roulette_wheel_selection)(self.population)
-
-                # Crossover
-                if random.random() < self.crossover_rate:
-                    if self.crossover_method == "uniform":
-                        child1 = self.uniform_crossover(parent1, parent2)
-                        child2 = self.uniform_crossover(parent2, parent1)
-                    else:
-                        child1 = self.one_point_crossover(parent1, parent2)
-                        child2 = self.one_point_crossover(parent2, parent1)
-                else:
-                    child1, child2 = parent1.copy(), parent2.copy()
-
-                # Mutation
-                for child in [child1, child2]:
-                    if random.random() < self.mutation_rate:
-                        (self.swap_mutation if self.mutation_method == "swap"
-                         else self.reschedule_mutation)(child)
-
-                new_population.extend([child1, child2])
-
-            # Survivor selection
-            self.population = self.survivor_selection(self.population, new_population[:self.population_size])
-
-
-
-            # Sort and decode the best schedule
-
-            decoded_schedule = self.DecodeToNames(best_schedule)
-
-
-
+        print(f"\nBest solution found at generation {generation_found} with fitness {best_fitness:.2f}")
+        decoded_schedule = self.DecodeToNames(best_schedule)
 
         return decoded_schedule, best_fitness, generation_found
 
