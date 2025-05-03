@@ -21,7 +21,7 @@ class GA:
         self.match_duration = match_duration
         self.available_hours_per_day = daily_end_hr - daily_start_hr
         self.tournament_days = tournament_days
-        
+
         self.venue_rest = venue_rest
         self.max_matches_per_day = max_matches_per_day
         
@@ -41,7 +41,8 @@ class GA:
         self.teams = []
         self.venues = []
         self.population = []
-        
+        self.fitness_history = []
+
         self.create_teams_and_venues()
         self.initialize_population()
 
@@ -268,7 +269,7 @@ class GA:
 
         best_fitness = float('inf')
         best_schedule = None
-        fitness_hist = []
+        # fitness_hist = []
         generation_found = 0
         no_improv_counter = 0
 
@@ -290,7 +291,7 @@ class GA:
             else:
                 no_improv_counter += 1
 
-            fitness_hist.append(current_best_fitness)
+            self.fitness_history.append(current_best_fitness)
 
             # Elitism
             # new_population.append(current_best_schedule)
@@ -345,10 +346,6 @@ class GA:
 
 
         return best_schedule, best_fitness, generation_found
-
-
-
-
 
 
     def display(self):
@@ -449,9 +446,9 @@ class GA:
 
 #  TODO: solve the problem of high convergence
 
-ga = GA(num_of_teams=10, num_of_venues=3)
-ga.display()
-schedule, fitness, gen = ga.evolve()
+# ga = GA(num_of_teams=10, num_of_venues=3)
+# ga.display()
+# schedule, fitness, gen = ga.evolve()
 
 # print(ga.get_team_name(ga.get_teams_from_match(10)[0]) + " VS " + ga.get_team_name(ga.get_teams_from_match(10)[1]))
 # ga.test_selection_methods()
