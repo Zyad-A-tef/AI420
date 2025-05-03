@@ -409,7 +409,7 @@ class GA:
 #  TODO: solve the problem of high convergence
 
 ga = GA(num_of_teams=8, num_of_venues=3)
-ga.display()
+ga.display_with_names()
 schedule, fitness, gen = ga.evolve()
 
 # print(ga.get_team_name(ga.get_teams_from_match(10)[0]) + " VS " + ga.get_team_name(ga.get_teams_from_match(10)[1]))
