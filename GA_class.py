@@ -194,7 +194,7 @@ class GA:
             if len(day_counts) >1:
                 avg_matches = len(schedule)/ len(day_counts)
                 var = sum((count - avg_matches)**2 for count in day_counts.values())/ len(day_counts)
-                fitness += var *5
+                fitness += var *4
 
         return fitness
 
@@ -409,89 +409,77 @@ class GA:
         if not self.population:
             raise ValueError("Population failed to initialize")
 
-        # Split population into islands
         islands = self.split_into_islands(self.population)
-
         best_fitness = float('inf')
         best_schedule = None
         generation_found = 0
         no_improv_counter = 0
 
-        for generation in range(self.generations):
-            all_individuals = []
-            all_fitness = []
+        for generation in range(1, self.generations + 1):
+            new_islands = []
 
-            for island_index, island in enumerate(islands):
+            for island in islands:
                 new_population = []
-                island_fitness = [self.fitness_function(ind) for ind in island]
-                best_idx = min(range(len(island_fitness)), key=lambda i: island_fitness[i])
-                current_best_schedule = island[best_idx]
-                current_best_fitness = island_fitness[best_idx]
-
-                # Track global best
-                if current_best_fitness < best_fitness:
-                    best_fitness = current_best_fitness
-                    best_schedule = current_best_schedule.copy()
-                    generation_found = generation + 1
-                    no_improv_counter = 0
-                else:
-                    no_improv_counter += 1
-
-                # Optional elitism
-                # new_population.append(current_best_schedule.copy())
-
-                # Optional adaptive mutation
-                # if no_improv_counter > 10:
-                #     self.mutation_rate = min(self.mutation_rate * 1.1, 0.5)
-                # else:
-                #     self.mutation_rate = max(self.mutation_rate * 0.9, 0.01)
 
                 while len(new_population) < len(island):
                     # Selection
-                    selector = self.tournament_selection if self.selection_method == "tournament" else self.roulette_wheel_selection
-                    parent1 = selector(island)
-                    parent2 = selector(island)
+                    select = self.tournament_selection if self.selection_method == "tournament" else self.roulette_wheel_selection
+                    parent1 = select(island)
+                    parent2 = select(island)
 
                     # Crossover
                     if random.random() < self.crossover_rate:
-                        if self.crossover_method == "uniform":
-                            child1 = self.uniform_crossover(parent1, parent2)
-                            child2 = self.uniform_crossover(parent2, parent1)
-                        else:
-                            child1 = self.one_point_crossover(parent1, parent2)
-                            child2 = self.one_point_crossover(parent2, parent1)
+                        if self.crossover_method == "one-point":
+                            child = self.one_point_crossover(parent1, parent2)
+                        else:  # uniform
+                            child = self.uniform_crossover(parent1, parent2)
                     else:
-                        child1, child2 = parent1.copy(), parent2.copy()
+                        child = parent1.copy()
 
                     # Mutation
-                    for child in [child1, child2]:
-                        if random.random() < self.mutation_rate:
-                            if self.mutation_method == "swap":
-                                self.swap_mutation(child)
-                            else:
-                                self.reschedule_mutation(child)
+                    if random.random() < self.mutation_rate:
+                        if self.mutation_method == "swap":
+                            self.swap_mutation(child)
+                        else:  # reschedule
+                            self.reschedule_mutation(child)
 
-                    new_population.extend([child1, child2])
+                    new_population.append(child)
 
                 # Survivor selection
-                islands[island_index] = self.survivor_selection(island, new_population[:len(island)])
+                island = self.survivor_selection(island, new_population)
+                new_islands.append(island)
 
-                all_individuals.extend(islands[island_index])
-                all_fitness.extend([self.fitness_function(ind) for ind in islands[island_index]])
-
-            self.fitness_history.append(best_fitness)
-            print(f"Generation {generation + 1}: Best fitness: {best_fitness:.2f}")
-
-            # Early stopping
-            if no_improv_counter >= self.early_stopping:
-                print(f"Early stopping at generation {generation + 1} - no improvement")
-                break
+            islands = new_islands
 
             # Migration
-            if generation % self.migration_interval == 0 and len(islands) > 1:
+            if generation % self.migration_interval == 0:
                 self.migrate_islands(islands)
 
+            # Evaluate best across all islands
+            flat_population = [ind for island in islands for ind in island]
+            fitness_values = [self.fitness_function(ind) for ind in flat_population]
+            best_idx = min(range(len(fitness_values)), key=lambda i: fitness_values[i])
+            current_best_schedule = flat_population[best_idx]
+            current_best_fitness = fitness_values[best_idx]
+
+            if current_best_fitness < best_fitness:
+                best_fitness = current_best_fitness
+                best_schedule = current_best_schedule.copy()
+                generation_found = generation
+                no_improv_counter = 0
+            else:
+                no_improv_counter += 1
+
+            self.fitness_history.append(best_fitness)
+            print(f"Generation {generation}: Best Fitness = {best_fitness:.2f}")
+
+            if no_improv_counter >= self.early_stopping:
+                print(f"Early stopping at generation {generation} (no improvement)")
+                break
+
+        print(f"\nBest solution found at generation {generation_found} with fitness {best_fitness:.2f}")
         decoded_schedule = self.DecodeToNames(best_schedule)
+
         return decoded_schedule, best_fitness, generation_found
 
 
