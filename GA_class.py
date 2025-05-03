@@ -4,7 +4,7 @@ from collections import defaultdict
 
 class GA:
     def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=300, crossover_rate=0.8,
-                  mutation_rate=0.2, early_stopping=50, tournament_days=5, match_duration=2, daily_start_hr=8, daily_end_hr=23,
+                  mutation_rate=0.2, early_stopping=50, tournament_days=30, match_duration=2, daily_start_hr=8, daily_end_hr=23,
                   max_matches_per_day=4,venue_rest=1, 
                   selection_method="tournament", 
                   crossover_method="uniform", 
@@ -168,7 +168,7 @@ class GA:
             if len(day_counts) >1:
                 avg_matches = len(schedule)/ len(day_counts)
                 var = sum((count - avg_matches)**2 for count in day_counts.values())/ len(day_counts)
-                fitness += var *10
+                fitness += var *5
 
         return fitness
 
