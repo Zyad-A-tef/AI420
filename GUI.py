@@ -1,7 +1,10 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 from GA_class import GA
 
 st.set_page_config(page_title="El Zozat's Tournament Scheduler", layout="centered")
+
 st.markdown("""
     <style>
         .title {
@@ -9,21 +12,13 @@ st.markdown("""
             text-align: center;
             line-height: 1.5;
         }
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .schedule-table th, .schedule-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        .schedule-table th {
-            background-color: #f2f2f2;
+        .tab-container {
+            margin-top: 20px;
         }
     </style>
     <div class="title">🚀 Welcome To El Zozat's Tournament Scheduler 👾</div>
 """, unsafe_allow_html=True)
+
 
 with st.sidebar:
     st.header("GA Settings 🤖")
@@ -36,6 +31,7 @@ with st.sidebar:
     mutation_method = st.selectbox("Mutation Method", ["swap", "reschedule"])
     survivor_method = st.selectbox("Survivor Method", ["steady-state", "generational", "elitism", "(μ + λ) selection"])
     run_ga = st.button("Run GA")
+
 
 if run_ga:
     with st.spinner("Working On It 🤓!"):
@@ -53,11 +49,34 @@ if run_ga:
         schedule, best_fitness, generation = ga.evolve()
         st.success(f"✅ Best fitness found in Generation {generation}")
 
-        # --- Display Schedule as a Table ---
-        st.header("📅 Tournament Schedule")
-        
+        # Store GA data in session state to persist across tabs
+        st.session_state.schedule = schedule
+        st.session_state.fitness_history = ga.fitness_history
+        st.session_state.best_fitness = best_fitness
+        st.session_state.generation = generation
 
-        # Display as a table
+# tabs
+tab1, tab2 = st.tabs(["📅 Schedule", "📊 Graphs"])
+
+# Tab 1: Schedule
+with tab1:
+    if run_ga and "schedule" in st.session_state:
+        st.header("Tournament Schedule")
         st.table(schedule)
 
+
+# Tab 2: Graphs
+with tab2:
+    if run_ga and "fitness_history" in st.session_state:
+        st.header("Fitness Evolution")
+        
+        # Plot Fitness History
+        fig, ax = plt.subplots()
+        ax.plot(st.session_state.fitness_history, label="Fitness", color="blue")
+        ax.axvline(st.session_state.generation, linestyle="--", color="red", label=f"Best Fitness at Generation: {st.session_state.generation}")
+        ax.set_xlabel("Generation")
+        ax.set_ylabel("Fitness Score (Lower = Better)")
+        ax.set_title("GA Training Progress")
+        ax.legend()
+        st.pyplot(fig)
 
