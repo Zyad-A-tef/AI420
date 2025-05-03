@@ -262,6 +262,31 @@ class GA:
         else:  # Default to (μ + λ) selection
             combined.sort(key=lambda ind: self.fitness_function(ind))
             return combined[:self.population_size]
+        
+
+
+    #### Decoding the schedule back into names ####
+
+    def DecodeToNames(self,schedule) : 
+
+        decoded_schedule = []
+
+        for match in schedule:
+            
+            game = dict()
+            teams , venue_id , day , hour = match
+
+            game['team1'] = self.get_team_name(teams[0])
+            game['team2'] = self.get_team_name(teams[1])
+            game['venue'] = self.get_venue_name(venue_id)
+            game['day']   = day
+            game['hour']  = hour
+
+            decoded_schedule.append(game)
+        
+        sorted_schedule = sorted(decoded_schedule, key=lambda x: (x['day'], x['hour']))
+
+        return sorted_schedule
 
     def evolve(self):
         if not self.population:
@@ -345,7 +370,15 @@ class GA:
             self.population = self.survivor_selection(self.population, new_population[:self.population_size])
 
 
-        return best_schedule, best_fitness, generation_found
+
+            # Sort and decode the best schedule
+
+            decoded_schedule = self.DecodeToNames(best_schedule)
+
+
+
+
+        return decoded_schedule, best_fitness, generation_found
 
 
     def display(self):
