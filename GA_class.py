@@ -9,8 +9,14 @@ class GA:
                   selection_method="tournament", 
                   crossover_method="uniform", 
                   mutation_method="swap",
-                  survivor_method="steady-state"):
+                  survivor_method="steady-state",
+                  random_seed = None):
         
+
+        ## added a random seed to ensure reproducible results every time
+        if random_seed is not None:
+            random.seed(random_seed)
+
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams

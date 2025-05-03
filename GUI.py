@@ -18,6 +18,7 @@ with st.sidebar:
     tournament_days = st.slider("Tournament Days", min_value=1, max_value=90, value=30)
     num_teams = st.number_input("Number of teams", min_value=1, max_value=50, value=10)
     num_venues = st.number_input("Number of venues", min_value=1, max_value=30, value=10)
+    random_seed = st.number_input("Add a Random seed to ensure reproducibility", min_value=0, max_value=10000000, value=42)
     selection_method = st.selectbox("Selection Method", ["tournament", "random"])
     crossover_method = st.selectbox("Crossover Method", ["uniform", "one_point"])
     mutation_method = st.selectbox("Mutation Method", ["swap", "reschedule"])
@@ -35,6 +36,7 @@ if run_ga:
             crossover_method=crossover_method,
             mutation_method=mutation_method,
             survivor_method=survivor_method,
+            random_seed = random_seed
         )
 
         schedule, best_fitness, generation = ga.evolve()
