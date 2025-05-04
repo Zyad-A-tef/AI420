@@ -3,7 +3,7 @@ import random
 from collections import defaultdict
 
 class GA:
-    def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=200, crossover_rate=0.8,
+    def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=300, crossover_rate=0.8,
                   mutation_rate=0.3, early_stopping=50, tournament_days=30, match_duration=2, daily_start_hr=8, daily_end_hr=23,
                   max_matches_per_day=4,venue_rest=1, 
                   selection_method="tournament", 
@@ -167,14 +167,14 @@ class GA:
             # same team cant play more than one match/day
             for team in [team1, team2]:
                 if any(prev_day == day for prev_day, _, _ in team_schedule[team]):
-                    fitness +=50
+                    fitness +=20
 
             # fair rest
             for team in [team1,team2]:
                 for prev_day, prev_start_hr, prev_end_hr in team_schedule[team]:
                     rest_days = abs(day - prev_day)
                     if rest_days < 3:
-                        fitness += (2 - rest_days) *20
+                        fitness += (2 - rest_days) *10
 
 
             team_schedule[team1].append ((day, start_hour, end_hour))
@@ -183,18 +183,18 @@ class GA:
 
             # venue double booking
             for current_day, current_start, current_end in venue_schedule[venue]:
-                if day == current_day and not (end_hour <= current_start and start_hour >= current_end):
-                    fitness +=40
+                if day == current_day and not (end_hour <= current_start or start_hour >= current_end):
+                    fitness +=10
             ## [edit] correct venue_schedule[venue] from Team_scheduleas
 
             venue_schedule[venue].append((day, start_hour, end_hour))
 
             #fair game time
             #check variance to make sure that games have normal distr. accross all days
-            if len(day_counts) >1:
-                avg_matches = len(schedule)/ len(day_counts)
-                var = sum((count - avg_matches)**2 for count in day_counts.values())/ len(day_counts)
-                fitness += var *4
+        if len(day_counts) >1:
+            avg_matches = len(schedule)/ len(day_counts)
+            var = sum((count - avg_matches)**2 for count in day_counts.values())/ len(day_counts)
+            fitness += var *2
 
         return fitness
 
@@ -316,22 +316,22 @@ class GA:
     # def evolve(self):
     #     if not self.population:
     #         raise ValueError("Population failed to initialize")
-
+    #
     #     best_fitness = float('inf')
     #     best_schedule = None
     #     # fitness_hist = []
     #     generation_found = 0
     #     no_improv_counter = 0
-
+    #
     #     for generation in range(self.generations):
     #         new_population = []
-
+    #
     #         # Evaluation
     #         fitness_values = [self.fitness_function(ind) for ind in self.population]
     #         best_idx = min(range(len(fitness_values)), key=lambda i: fitness_values[i])
     #         current_best_schedule = self.population[best_idx]
     #         current_best_fitness = fitness_values[best_idx]
-
+    #
     #         # Track best solution
     #         if current_best_fitness < best_fitness:
     #             best_fitness = current_best_fitness
@@ -340,38 +340,38 @@ class GA:
     #             no_improv_counter = 0
     #         else:
     #             no_improv_counter += 1
-
+    #
     #         self.fitness_history.append(current_best_fitness)
-
+    #
     #         # Elitism
     #         # new_population.append(current_best_schedule)
-
+    #
     #         #controlled Elitism
     #         # if random.random() < 0.5:
     #         #     new_population.append(current_best_schedule)
-
+    #
     #         print(f"Generation {generation + 1}: Best fitness: {current_best_fitness:.2f}")
-
+    #
     #         # Early stopping
     #         if no_improv_counter >= self.early_stopping:
     #             print(f"Early stopping at generation {generation + 1} - no improvement")
     #             break
-
-
+    #
+    #
     #         #adaptive mutation rate
     #         # if no_improv_counter > 10:
     #         #     self.mutation_rate = min(self.mutation_rate * 1.1, 0.5)
     #         # else:
     #         #     self.mutation_rate = min(self.mutation_rate * 0.9, 0.01)
-
-
+    #
+    #
     #         while len(new_population) < self.population_size:
     #             # Selection
     #             parent1 = (self.tournament_selection if self.selection_method == "tournament"
     #                        else self.roulette_wheel_selection)(self.population)
     #             parent2 = (self.tournament_selection if self.selection_method == "tournament"
     #                        else self.roulette_wheel_selection)(self.population)
-
+    #
     #             # Crossover
     #             if random.random() < self.crossover_rate:
     #                 if self.crossover_method == "uniform":
@@ -382,27 +382,27 @@ class GA:
     #                     child2 = self.one_point_crossover(parent2, parent1)
     #             else:
     #                 child1, child2 = parent1.copy(), parent2.copy()
-
+    #
     #             # Mutation
     #             for child in [child1, child2]:
     #                 if random.random() < self.mutation_rate:
     #                     (self.swap_mutation if self.mutation_method == "swap"
     #                      else self.reschedule_mutation)(child)
-
+    #
     #             new_population.extend([child1, child2])
-
+    #
     #         # Survivor selection
     #         self.population = self.survivor_selection(self.population, new_population[:self.population_size])
-
-
-
+    #
+    #
+    #
     #         # Sort and decode the best schedule
-
+    #
     #         decoded_schedule = self.DecodeToNames(best_schedule)
-
-
-
-
+    #
+    #
+    #
+    #
     #     return decoded_schedule, best_fitness, generation_found
 
     def evolve(self):
