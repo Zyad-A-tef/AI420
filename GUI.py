@@ -73,10 +73,16 @@ with tab2:
         # Plot Fitness History
         fig, ax = plt.subplots()
         ax.plot(st.session_state.fitness_history, label="Fitness", color="blue")
-        ax.axvline(st.session_state.generation, linestyle="--", color="red", label=f"Best Fitness at Generation: {st.session_state.generation}")
+        ax.axvline(st.session_state.generation, linestyle="--", color="red",
+                    label=f"Best Fitness at Generation: {st.session_state.generation}")
+        # Horizontal line at best fitness value
+        ax.axhline(st.session_state.best_fitness, linestyle="--", color="green", 
+           label=f"Best Fitness Value: {st.session_state.best_fitness:.2f}")
         ax.set_xlabel("Generation")
+        ax.set_ylim(bottom= min(st.session_state.fitness_history)-50 , top=max(st.session_state.fitness_history))
         ax.set_ylabel("Fitness Score (Lower = Better)")
         ax.set_title("GA Training Progress")
         ax.legend()
+        ax.grid()
         st.pyplot(fig)
 
