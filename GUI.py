@@ -89,15 +89,45 @@ with tab2:
 
 
 
-# TODO : finish the rest of Tab3 to compare between the saved resuts : 
+with tab3:
+    st.header("🧐 Compare Results")
+    
+    # Initialize variables
+    run1 = None
+    run2 = None
+    
+    # Only try to load if we have runs to compare
+    run1, run2 = load_data_from_csv()
+    
+    if run1 is not None and run2 is not None:
+        # Display comparison only if we have valid data
+        st.subheader("Side-by-Side Comparison")
 
-# 1 - read the results from the Folder called results each one saved with a unqiue name (timestamp)
-# 2 - show all the info with the graph of each result in the compare tab 
-# 3 - KYS
 
+        # meta data 
 
-# # Compare tab
-
-# with tab3 : 
-
-#     if run_ga
+        st.write("### Configuration")
+        meta_cols = st.columns(2)
+        with meta_cols[0]:
+            st.json(run1["inputs"])
+        with meta_cols[1]:
+            st.json(run2["inputs"]) 
+    
+        # Schedule comparison
+        st.write("### Schedules")
+        sched_cols = st.columns(2)
+        with sched_cols[0]:
+            st.write("**Run 1**")
+            st.table(run1['schedule'])
+        with sched_cols[1]:
+            st.write("**Run 2**")
+            st.table(run2['schedule'])
+        
+        # Add a button to clear the comparison
+        if st.button("Clear Comparison"):
+            if "compared_run1" in st.session_state:
+                del st.session_state.compared_run1
+            if "compared_run2" in st.session_state:
+                del st.session_state.compared_run2
+            st.session_state.show_comparison = False
+            st.experimental_rerun()
