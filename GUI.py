@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from GA_class import GA
-from utilities import Save_results_to_csv
+from utilities import *
 
 st.set_page_config(page_title="El Zozat's Tournament Scheduler", layout="centered")
 
@@ -84,29 +84,17 @@ with tab1:
 with tab2:
     if run_ga and "fitness_history" in st.session_state:
         st.header("Fitness Evolution")
-        
-        # Plot Fitness History
-        fig, ax = plt.subplots()
-        ax.plot(st.session_state.fitness_history, label="Fitness", color="blue")
-        ax.axvline(st.session_state.generation, linestyle="--", color="red",
-                    label=f"Best Fitness at Generation: {st.session_state.generation}")
-        # Horizontal line at best fitness value
-        ax.axhline(st.session_state.best_fitness, linestyle="--", color="green", 
-           label=f"Best Fitness Value: {st.session_state.best_fitness:.2f}")
-        ax.set_xlabel("Generation")
-        ax.set_ylim(bottom= min(st.session_state.fitness_history)-50 , top=max(st.session_state.fitness_history))
-        ax.set_ylabel("Fitness Score (Lower = Better)")
-        ax.set_title("GA Training Progress")
-        ax.legend()
-        ax.grid()
-        st.pyplot(fig)
+
+        Fitness_history_plot(st.session_state.fitness_history , st.session_state.best_fitness , st.session_state.generation)
+
+
 
 # TODO : finish the rest of Tab3 to compare between the saved resuts : 
-"""
-    1 - read the results from the Folder called results each one saved with a unqiue name (timestamp)
-    2 - show all the info with the graph of each result in the compare tab 
-    3 - KYS
-"""
+
+# 1 - read the results from the Folder called results each one saved with a unqiue name (timestamp)
+# 2 - show all the info with the graph of each result in the compare tab 
+# 3 - KYS
+
 
 # # Compare tab
 
