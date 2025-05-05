@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from GA_class import GA
+from utilities import Save_results_to_csv
 
 st.set_page_config(page_title="El Zozat's Tournament Scheduler", layout="centered")
 
@@ -55,15 +56,29 @@ if run_ga:
         st.session_state.best_fitness = best_fitness
         st.session_state.generation = generation
 
+        # save inputs into session 
+        st.session_state.input = {"Tournament Days":tournament_days , "Number of teams" : num_teams , "Number of venues":num_venues , 
+                                  "Selection Method":selection_method ,"Crossover Method":crossover_method , 
+                                  "Mutation Method":mutation_method ,"Survivor Method":survivor_method , 
+                                  "Random Seed":random_seed}
+
 # tabs
-tab1, tab2 = st.tabs(["📅 Schedule", "📊 Graphs"])
+tab1, tab2  , tab3 = st.tabs(["📅 Schedule", "📊 Graphs" , "🧐Compare between Results"])
 
 # Tab 1: Schedule
 with tab1:
     if run_ga and "schedule" in st.session_state:
         st.header("Tournament Schedule")
-        st.table(schedule)
+        st.table(st.session_state.schedule)
 
+    if st.button("Save Results ? 🤔" , key="save_results_btn"):
+
+        if Save_results_to_csv(st.session_state.schedule , st.session_state.input , st.session_state.fitness_history):
+            st.success("Saved results successfully🥳")
+            st.table(st.session_state.schedule)
+        else:
+            st.error("Nah Try again broski we couldn't save it", icon="🚨")
+            st.table(st.session_state.schedule)
 
 # Tab 2: Graphs
 with tab2:
@@ -86,3 +101,15 @@ with tab2:
         ax.grid()
         st.pyplot(fig)
 
+# TODO : finish the rest of Tab3 to compare between the saved resuts : 
+"""
+    1 - read the results from the Folder called results each one saved with a unqiue name (timestamp)
+    2 - show all the info with the graph of each result in the compare tab 
+    3 - KYS
+"""
+
+# # Compare tab
+
+# with tab3 : 
+
+#     if run_ga
