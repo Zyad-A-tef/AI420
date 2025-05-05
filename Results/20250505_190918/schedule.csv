@@ -1,0 +1,46 @@
+team1,team2,venue,day,hour
+Manchester City,Bayern Munich,San Siro,1,12
+Everton FC,Manchester United FC,Stadio Olimpico,1,16
+Wolverhampton Wanderers,Newcastle United FC,Stamford Bridge,2,12
+Sevilla FC,Real Madrid CF,San Siro,3,12
+FC Porto,Manchester United FC,Estadio Benito Villamarín,3,14
+Tottenham Hotspur,Bayern Munich,Parc des Princes,3,14
+Sevilla FC,FC Porto,Parc des Princes,5,12
+Manchester United FC,Real Madrid CF,Stade de la Meinau,5,18
+Manchester City,Newcastle United FC,Stade de la Meinau,5,21
+Everton FC,Bayern Munich,Estadio Benito Villamarín,7,17
+Tottenham Hotspur,Newcastle United FC,Stadio Olimpico,7,20
+FC Porto,Real Madrid CF,Stade de la Meinau,7,21
+Sevilla FC,Bayern Munich,Parc des Princes,9,12
+FC Porto,Manchester City,Stadio Luigi Ferraris,10,15
+Manchester United FC,Newcastle United FC,Parc des Princes,10,19
+Everton FC,Newcastle United FC,Estadio Benito Villamarín,12,11
+FC Porto,Tottenham Hotspur,Stade de la Meinau,12,18
+Bayern Munich,Wolverhampton Wanderers,Parc des Princes,12,20
+Manchester City,Real Madrid CF,Stade de la Meinau,13,18
+FC Porto,Newcastle United FC,Stamford Bridge,14,13
+Everton FC,Wolverhampton Wanderers,Stadio Olimpico,14,16
+Manchester United FC,Bayern Munich,Stadio Luigi Ferraris,15,13
+Sevilla FC,Tottenham Hotspur,Stamford Bridge,15,17
+Real Madrid CF,Newcastle United FC,Estadio Benito Villamarín,16,16
+Everton FC,Manchester City,Olympiastadion Berlin,16,21
+FC Porto,Bayern Munich,Old Trafford,17,17
+Real Madrid CF,Wolverhampton Wanderers,Old Trafford,18,8
+Sevilla FC,Manchester City,Stade de la Meinau,18,13
+Tottenham Hotspur,Manchester United FC,Parc des Princes,19,17
+Bayern Munich,Real Madrid CF,Stadio Luigi Ferraris,20,9
+FC Porto,Wolverhampton Wanderers,Estadio Benito Villamarín,20,20
+Sevilla FC,Manchester United FC,San Siro,23,11
+Everton FC,FC Porto,San Siro,23,18
+Tottenham Hotspur,Manchester City,Estadio Benito Villamarín,23,20
+Manchester City,Wolverhampton Wanderers,Stamford Bridge,25,8
+Everton FC,Tottenham Hotspur,Parc des Princes,25,12
+Sevilla FC,Newcastle United FC,Stade de la Meinau,25,17
+Sevilla FC,Wolverhampton Wanderers,Stamford Bridge,27,18
+Everton FC,Real Madrid CF,Old Trafford,27,20
+Tottenham Hotspur,Wolverhampton Wanderers,Parc des Princes,28,13
+Manchester United FC,Manchester City,Stadio Olimpico,28,16
+Everton FC,Sevilla FC,Parc des Princes,29,16
+Bayern Munich,Newcastle United FC,Stamford Bridge,30,12
+Manchester United FC,Wolverhampton Wanderers,Parc des Princes,30,14
+Tottenham Hotspur,Real Madrid CF,Stamford Bridge,30,15

@@ -42,4 +42,21 @@ def Save_results_to_csv(schedule , inputs , fitness_history ):
 
 
 # TODO : the fitness history Graph function (ana matet walahy hkml bokra)
-        
+
+def Fitness_history_plot(fitness_history , best_fitness , gene):
+
+    # Plot Fitness History
+        fig, ax = plt.subplots()
+        ax.plot(fitness_history, label="Fitness", color="blue")
+        ax.axvline(gene, linestyle="--", color="red",
+                    label=f"Best Fitness at Generation: {gene}")
+        # Horizontal line at best fitness value
+        ax.axhline(best_fitness, linestyle="--", color="green", 
+           label=f"Best Fitness Value: {best_fitness:.2f}")
+        ax.set_xlabel("Generation")
+        ax.set_ylim(bottom= min(fitness_history)-50 , top=max(fitness_history))
+        ax.set_ylabel("Fitness Score (Lower = Better)")
+        ax.set_title("GA Training Progress")
+        ax.legend()
+        ax.grid()
+        st.pyplot(fig)
