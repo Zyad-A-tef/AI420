@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from GA_class import GA
-from utilities import *
+from Utilities import *
 
 st.set_page_config(page_title="El Zozat's Tournament Scheduler", layout="centered")
 
 st.markdown("""
     <style>
-        .title {
+        .title {    
             font-size: 30px;
             text-align: center;
             line-height: 1.5;
@@ -24,8 +24,11 @@ st.markdown("""
 with st.sidebar:
     st.header("GA Settings 🤖")
     tournament_days = st.slider("Tournament Days", min_value=1, max_value=90, value=30)
-    num_teams = st.number_input("Number of teams", min_value=1, max_value=50, value=10)
-    num_venues = st.number_input("Number of venues", min_value=1, max_value=30, value=10)
+    match_duration = st.number_input("Match Duration", min_value=1, max_value=10, value=2)
+    rest = st.number_input("Venue Maintenance", min_value=1, max_value=20, value=1)
+    max_matches_per_day = st.number_input("Max Matches/Day", min_value=1, max_value=20, value=4)
+    num_teams = st.number_input("Number Of Teams", min_value=1, max_value=50, value=10)
+    num_venues = st.number_input("Number Of Venues", min_value=1, max_value=30, value=3)
     random_seed = st.number_input("Random Seed", min_value=0, max_value=10000000, value=42)
     selection_method = st.selectbox("Selection Method", ["tournament", "random"])
     crossover_method = st.selectbox("Crossover Method", ["uniform", "one_point"])
@@ -40,6 +43,9 @@ if run_ga:
             tournament_days=tournament_days,
             num_of_teams=num_teams,
             num_of_venues=num_venues,
+            match_duration=match_duration,
+            venue_rest=rest,
+            max_matches_per_day=max_matches_per_day,
             selection_method=selection_method,
             crossover_method=crossover_method,
             mutation_method=mutation_method,
