@@ -1,0 +1,2 @@
+Tournament Days,Number of teams,Number of venues,Selection Method,Crossover Method,Mutation Method,Survivor Method,Random Seed
+30,10,10,tournament,uniform,swap,steady-state,42
