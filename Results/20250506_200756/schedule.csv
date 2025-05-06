@@ -1,0 +1,46 @@
+team1,team2,venue,day,hour
+Olympiacos FC,Arsenal FC,Red Bull Arena,1,9
+Real Madrid CF,RB Leipzig,Estadio do Dragão,1,10
+Besiktas JK,Inter Milan,Estadio do Dragão,1,12
+FC Spartak Moscow,Valencia CF,Red Bull Arena,1,16
+Lazio SS,Juventus Turin,Red Bull Arena,1,21
+Olympiacos FC,Lazio SS,Estadio do Dragão,3,17
+Besiktas JK,RB Leipzig,Estadi Mallorca Son Moix,3,20
+Real Madrid CF,Valencia CF,Estadio do Dragão,3,21
+Lazio SS,RB Leipzig,Red Bull Arena,5,9
+Besiktas JK,Real Madrid CF,Estadio do Dragão,5,16
+Juventus Turin,Valencia CF,Estadio do Dragão,5,21
+Arsenal FC,FC Spartak Moscow,Estadi Mallorca Son Moix,6,16
+Inter Milan,Juventus Turin,Red Bull Arena,8,15
+Olympiacos FC,FC Spartak Moscow,Estadi Mallorca Son Moix,8,21
+Arsenal FC,Real Madrid CF,Estadi Mallorca Son Moix,9,10
+Besiktas JK,Juventus Turin,Estadi Mallorca Son Moix,10,16
+Olympiacos FC,Valencia CF,Estadi Mallorca Son Moix,10,18
+Inter Milan,FC Spartak Moscow,Estadi Mallorca Son Moix,10,20
+Olympiacos FC,Real Madrid CF,Estadi Mallorca Son Moix,11,9
+Arsenal FC,RB Leipzig,Estadio do Dragão,11,10
+Lazio SS,FC Spartak Moscow,Estadio do Dragão,11,14
+Besiktas JK,Lazio SS,Red Bull Arena,12,13
+Real Madrid CF,Inter Milan,Estadi Mallorca Son Moix,13,20
+Juventus Turin,RB Leipzig,Estadio do Dragão,14,11
+Besiktas JK,FC Spartak Moscow,Estadio do Dragão,14,17
+Besiktas JK,Arsenal FC,Red Bull Arena,16,8
+Juventus Turin,FC Spartak Moscow,Estadi Mallorca Son Moix,16,14
+Olympiacos FC,Inter Milan,Estadio do Dragão,17,16
+Lazio SS,Valencia CF,Estadio do Dragão,19,8
+Inter Milan,RB Leipzig,Red Bull Arena,19,18
+Lazio SS,Arsenal FC,Estadio do Dragão,20,8
+Real Madrid CF,Juventus Turin,Red Bull Arena,20,13
+Olympiacos FC,Besiktas JK,Estadi Mallorca Son Moix,21,10
+RB Leipzig,Valencia CF,Red Bull Arena,21,11
+Arsenal FC,Valencia CF,Estadio do Dragão,24,17
+Olympiacos FC,RB Leipzig,Red Bull Arena,25,16
+Arsenal FC,Inter Milan,Estadio do Dragão,26,8
+Real Madrid CF,FC Spartak Moscow,Red Bull Arena,26,15
+Lazio SS,Inter Milan,Estadi Mallorca Son Moix,27,8
+Olympiacos FC,Juventus Turin,Estadio do Dragão,27,21
+Besiktas JK,Valencia CF,Estadio do Dragão,28,8
+Lazio SS,Real Madrid CF,Estadi Mallorca Son Moix,29,8
+Arsenal FC,Juventus Turin,Estadi Mallorca Son Moix,29,14
+FC Spartak Moscow,RB Leipzig,Estadi Mallorca Son Moix,30,10
+Inter Milan,Valencia CF,Estadi Mallorca Son Moix,30,14

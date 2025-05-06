@@ -105,6 +105,36 @@ def load_run(run_id):
 
 
 
+def plot_fitness_history(fitness_data, best_fitness, best_gene, title="Fitness Evolution"):
+    """
+    Args:
+        fitness_data (pd.Series or array-like): Raw fitness values over generations
+        best_fitness (float): Pre-computed max fitness value
+        best_gene (int): 1-based index of the best generation
+        title (str): Plot title
+    """
+    plt.figure(figsize=(10, 10))
+    
+    # Plot fitness curve
+    plt.plot(fitness_data, label="Fitness", linewidth=2)
+    
+    # Highlight best gene (convert back to 0-based for plotting if needed)
+    plt.axvline(x=best_gene - 1, color='red', linestyle='--', 
+                label=f'Best Generation: {best_gene} (Fitness: {best_fitness:.2f})')
+    
+    # Annotate best point
+    plt.scatter(best_gene - 1, best_fitness, color='red', s=100, zorder=5)
+    
+    plt.xlabel("Generation")
+    plt.ylabel("Fitness Score")
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    
+    # For Streamlit
+    st.pyplot(plt.gcf())
+
 
 ### testing 
 

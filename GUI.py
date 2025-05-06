@@ -66,7 +66,8 @@ if run_ga:
         st.session_state.input = {"Tournament Days":tournament_days , "Number of teams" : num_teams , "Number of venues":num_venues , 
                                   "Selection Method":selection_method ,"Crossover Method":crossover_method , 
                                   "Mutation Method":mutation_method ,"Survivor Method":survivor_method , 
-                                  "Random Seed":random_seed}
+                                  "Random Seed":random_seed , "Max number of matches per day" : max_matches_per_day,
+                                  "Venue Rest Period" : rest , "Match Duration" : match_duration}
 
 # tabs
 tab1, tab2  , tab3 = st.tabs(["📅 Schedule", "📊 Graphs" , "🧐Compare between Results"])
@@ -104,12 +105,17 @@ with tab3:
     
     # Only try to load if we have runs to compare
     run1, run2 = load_data_from_csv()
-    
+
+
     if run1 is not None and run2 is not None:
         # Display comparison only if we have valid data
         st.subheader("Side-by-Side Comparison")
 
+        best_fitness1 = float(run1['fitness'].min())  # Force single float
+        gene1 = int(run1['fitness'].idxmin()) + 1                 # Convert to 1-based as integer
 
+        best_fitness2 = float(run2['fitness'].min())  # Force single float
+        gene2 = int(run2['fitness'].idxmin()) + 1 
         # meta data 
 
         st.write("### Configuration")
@@ -125,9 +131,23 @@ with tab3:
         with sched_cols[0]:
             st.write("**Run 1**")
             st.table(run1['schedule'])
+            # Plot
+            plot_fitness_history(
+                fitness_data=run1['fitness'], 
+                best_fitness=best_fitness1,
+                best_gene=gene1,
+                title="Run 1 Fitness Evolution"
+            )
         with sched_cols[1]:
             st.write("**Run 2**")
             st.table(run2['schedule'])
+            # Plot
+            plot_fitness_history(
+                fitness_data=run2['fitness'], 
+                best_fitness=best_fitness2,
+                best_gene=gene2,
+                title="Run 2 Fitness Evolution"
+            )
         
         # Add a button to clear the comparison
         if st.button("Clear Comparison"):
