@@ -1,0 +1,183 @@
+{
+    "0": {
+      "name": "United Center",
+      "city": "Chicago",
+      "country": "USA",
+      "capacity": 20917
+    },
+    "1": {
+      "name": "Wells Fargo Center",
+      "city": "Philadelphia",
+      "country": "USA",
+      "capacity": 21000
+    },
+    "2": {
+      "name": "Scotiabank Arena",
+      "city": "Toronto",
+      "country": "Canada",
+      "capacity": 20511
+    },
+    "3": {
+      "name": "Capital One Arena",
+      "city": "Washington, D.C.",
+      "country": "USA",
+      "capacity": 20356
+    },
+    "4": {
+      "name": "Little Caesars Arena",
+      "city": "Detroit",
+      "country": "USA",
+      "capacity": 20332
+    },
+    "5": {
+      "name": "Delta Center",
+      "city": "Salt Lake City",
+      "country": "USA",
+      "capacity": 20000
+    },
+    "6": {
+      "name": "KFC Yum! Center",
+      "city": "Louisville",
+      "country": "USA",
+      "capacity": 22090
+    },
+    "7": {
+      "name": "Dean E. Smith Center",
+      "city": "Chapel Hill",
+      "country": "USA",
+      "capacity": 21750
+    },
+    "8": {
+      "name": "Rupp Arena",
+      "city": "Lexington",
+      "country": "USA",
+      "capacity": 23000
+    },
+    "9": {
+      "name": "Thompson-Boling Arena",
+      "city": "Knoxville",
+      "country": "USA",
+      "capacity": 21678
+    },
+    "10": {
+      "name": "Carrier Dome (JMA Wireless Dome)",
+      "city": "Syracuse",
+      "country": "USA",
+      "capacity": 30286
+    },
+    "11": {
+      "name": "Madison Square Garden",
+      "city": "New York",
+      "country": "USA",
+      "capacity": 19812
+    },
+    "12": {
+      "name": "Chase Center",
+      "city": "San Francisco",
+      "country": "USA",
+      "capacity": 18064
+    },
+    "13": {
+      "name": "Crypto.com Arena",
+      "city": "Los Angeles",
+      "country": "USA",
+      "capacity": 18997
+    },
+    "14": {
+      "name": "Barclays Center",
+      "city": "Brooklyn",
+      "country": "USA",
+      "capacity": 17732
+    },
+    "15": {
+      "name": "Fiserv Forum",
+      "city": "Milwaukee",
+      "country": "USA",
+      "capacity": 17500
+    },
+    "16": {
+      "name": "TD Garden",
+      "city": "Boston",
+      "country": "USA",
+      "capacity": 18624
+    },
+    "17": {
+      "name": "Toyota Center",
+      "city": "Houston",
+      "country": "USA",
+      "capacity": 18055
+    },
+    "18": {
+      "name": "State Farm Arena",
+      "city": "Atlanta",
+      "country": "USA",
+      "capacity": 16600
+    },
+    "19": {
+      "name": "Ball Arena",
+      "city": "Denver",
+      "country": "USA",
+      "capacity": 19520
+    },
+    "20": {
+      "name": "American Airlines Center",
+      "city": "Dallas",
+      "country": "USA",
+      "capacity": 19200
+    },
+    "21": {
+      "name": "Footprint Center",
+      "city": "Phoenix",
+      "country": "USA",
+      "capacity": 18422
+    },
+    "22": {
+      "name": "Gainbridge Fieldhouse",
+      "city": "Indianapolis",
+      "country": "USA",
+      "capacity": 17923
+    },
+    "23": {
+      "name": "FedExForum",
+      "city": "Memphis",
+      "country": "USA",
+      "capacity": 17794
+    },
+    "24": {
+      "name": "Golden 1 Center",
+      "city": "Sacramento",
+      "country": "USA",
+      "capacity": 17583
+    },
+    "25": {
+      "name": "Rocket Mortgage FieldHouse",
+      "city": "Cleveland",
+      "country": "USA",
+      "capacity": 19432
+    },
+    "26": {
+      "name": "Moda Center",
+      "city": "Portland",
+      "country": "USA",
+      "capacity": 20500
+    },
+    "27": {
+      "name": "Smoothie King Center",
+      "city": "New Orleans",
+      "country": "USA",
+      "capacity": 16867
+    },
+    "28": {
+      "name": "Spectrum Center",
+      "city": "Charlotte",
+      "country": "USA",
+      "capacity": 19077
+    },
+    "29": {
+      "name": "Paycom Center",
+      "city": "Oklahoma City",
+      "country": "USA",
+      "capacity": 18203
+    }
+  }
+  

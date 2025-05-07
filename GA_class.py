@@ -10,7 +10,8 @@ class GA:
                   crossover_method="uniform", 
                   mutation_method="swap",
                   survivor_method="steady-state",
-                  random_seed = None):
+                  random_seed = None,
+                  game_name = ""):
         
         self.num_islands = 4
         self.migration_rate = 0.4  # 10% of population migrates
@@ -20,6 +21,7 @@ class GA:
         if random_seed is not None:
             random.seed(random_seed)
 
+        self.game_name = "champions_league"
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
@@ -60,8 +62,14 @@ class GA:
 
     
     # Function to prepare teams data from teams saved data
-    def prepare_teams_data(self, json_file: str = 'champions_league_teams.json'):
-        with open(json_file, 'r') as f:
+    def prepare_teams_data(self):
+
+        if not self.game_name:
+            raise ValueError(f"You have to choose game first")
+        
+        game_folder = "schedules_data/" + self.game_name + "/"
+
+        with open(game_folder + "teams" + ".json", 'r') as f:
             all_teams = json.load(f)
         
         # Convert values to a list (ignore IDs)
@@ -74,8 +82,15 @@ class GA:
         self.teams_data = random.sample(team_names, self.num_of_teams)
 
     # Function to prepare venues data from venues saved data
-    def prepare_venues_data(self, json_file: str = 'football_venues_full.json'):
-        with open(json_file, 'r') as f:
+    def prepare_venues_data(self):
+        
+        if not self.game_name:
+            raise ValueError(f"You have to choose game first")
+        
+        game_folder = "schedules_data/" + self.game_name + "/"
+
+
+        with open(game_folder + "venues_full" + ".json", 'r') as f:
             all_venues = json.load(f)
         
         venue_names = list(all_venues.values())  # Full dictionaries
@@ -581,8 +596,8 @@ class GA:
 
 #  TODO: solve the problem of high convergence
 
-# ga = GA(num_of_teams=10, num_of_venues=3)
-# ga.display()
+ga = GA(num_of_teams=10, num_of_venues=3)
+# ga.display_with_names()
 # schedule, fitness, gen = ga.evolve()
 
 # print(ga.get_team_name(ga.get_teams_from_match(10)[0]) + " VS " + ga.get_team_name(ga.get_teams_from_match(10)[1]))
