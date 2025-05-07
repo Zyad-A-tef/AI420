@@ -35,6 +35,8 @@ with st.sidebar:
     num_venues = st.number_input("Number Of Venues", min_value=1, max_value=30, value=3)
     random_seed = st.number_input("Random Seed", min_value=0, max_value=10000000, value=42)
 
+    initialization_approach = st.selectbox("Initialization Approach", ["random"])
+
     selection_method = st.selectbox("Selection Method", ["tournament", "random"])
     crossover_method = st.selectbox("Crossover Method", ["uniform", "one_point"])
     mutation_method = st.selectbox("Mutation Method", ["swap", "reschedule"])
@@ -46,22 +48,24 @@ with st.sidebar:
 if run_ga:
     with st.spinner("Working On It 🤓!"):
         ga = GA(
-            tournament_days      = tournament_days,
- 
-            num_of_teams         = num_teams,
-            num_of_venues        = num_venues,
+            tournament_days         = tournament_days,
+    
+            num_of_teams            = num_teams,
+            num_of_venues           = num_venues,
+                
+            match_duration          = match_duration,
+            venue_rest              = rest,
+            max_matches_per_day     = max_matches_per_day,
              
-            match_duration       = match_duration,
-            venue_rest           = rest,
-            max_matches_per_day  = max_matches_per_day,
-             
-            selection_method     = selection_method,
-            crossover_method     = crossover_method,
-            mutation_method      = mutation_method,
-            survivor_method      = survivor_method,
-            random_seed          = random_seed,
-             
-            game_name            =  game_name
+            initialization_approach = initialization_approach,
+
+            selection_method        = selection_method,
+            crossover_method        = crossover_method,
+            mutation_method         = mutation_method,
+            survivor_method         = survivor_method,
+            random_seed             = random_seed,
+                
+            game_name               =  game_name
         )
 
         schedule, best_fitness, generation = ga.evolve()
@@ -74,7 +78,8 @@ if run_ga:
         st.session_state.generation = generation
 
         # save inputs into session 
-        st.session_state.input = {"Game Name": game_name, "Tournament Days":tournament_days , "Number of teams" : num_teams , "Number of venues":num_venues , 
+        st.session_state.input = {"Game Name": game_name, "Tournament Days":tournament_days , "Number of teams" : num_teams , "Number of venues":num_venues ,
+                                  "Initialization Approach" : initialization_approach, 
                                   "Selection Method":selection_method ,"Crossover Method":crossover_method , 
                                   "Mutation Method":mutation_method ,"Survivor Method":survivor_method , 
                                   "Random Seed":random_seed , "Max number of matches per day" : max_matches_per_day,

@@ -11,7 +11,8 @@ class GA:
                   mutation_method="swap",
                   survivor_method="steady-state",
                   random_seed = None,
-                  game_name = ""):
+                  game_name = "champions_league",
+                  initialization_approach = "random"):
         
         self.num_islands = 4
         self.migration_rate = 0.4  # 10% of population migrates
@@ -27,7 +28,7 @@ class GA:
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
         self.tournament_days = tournament_days
-        
+
         self.match_duration = match_duration
         self.max_matches_per_day = max_matches_per_day
         self.venue_rest = venue_rest
@@ -56,6 +57,8 @@ class GA:
         self.venues = []
         self.population = []
         self.fitness_history = []
+
+        self.initialization_approach = initialization_approach
 
         self.create_teams_and_venues()
         self.initialize_population()
@@ -126,9 +129,15 @@ class GA:
 
         return fixtures
 
-
-
     def initialize_population(self):
+        if self.initialization_approach == "random":
+            self.random_initialize_population()
+
+        else:
+            self.random_initialize_population()
+    
+    
+    def random_initialize_population(self):
         self.population = []
         base_fixtures = self.generate_round_robin_fixtures()
 
@@ -149,6 +158,7 @@ class GA:
                     schedule.append((match,venue,day,start_hour))
 
             self.population.append(schedule)
+
 
     ### Diversity Technqies (island split)        
     def split_into_islands(self, population):
