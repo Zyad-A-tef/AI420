@@ -21,11 +21,13 @@ class GA:
         if random_seed is not None:
             random.seed(random_seed)
 
-        self.game_name = "champions_league"
+        self.game_name = game_name
+
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
         self.tournament_days = tournament_days
+        
         self.match_duration = match_duration
         self.max_matches_per_day = max_matches_per_day
         self.venue_rest = venue_rest
@@ -597,7 +599,7 @@ class GA:
 
 #  TODO: solve the problem of high convergence
 
-ga = GA(num_of_teams=10, num_of_venues=3)
+# ga = GA(num_of_teams=10, num_of_venues=3)
 # ga.display_with_names()
 # schedule, fitness, gen = ga.evolve()
 
