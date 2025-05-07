@@ -17,7 +17,7 @@ st.markdown("""
             margin-top: 20px;
         }
     </style>
-    <div class="title">🚀 Welcome To El Zozat's Tournament Scheduler 👾</div>
+    <div class="title">👾 Welcome To El Zozat's Tournament Scheduler 👾</div>
 """, unsafe_allow_html=True)
 
 
@@ -37,7 +37,7 @@ with st.sidebar:
 
     initialization_approach = st.selectbox("Initialization Approach", ["random", "greedy"])
 
-    selection_method = st.selectbox("Selection Method", ["tournament", "random"])
+    selection_method = st.selectbox("Selection Method", ["Tournament", "random"])
     crossover_method = st.selectbox("Crossover Method", ["uniform", "one_point"])
     mutation_method = st.selectbox("Mutation Method", ["swap", "reschedule"])
     survivor_method = st.selectbox("Survivor Method", ["steady-state", "generational", "elitism", "(μ + λ) selection"])
@@ -69,7 +69,7 @@ if run_ga:
         )
 
         schedule, best_fitness, generation = ga.evolve()
-        st.success(f"✅ Best fitness found in Generation {generation}")
+        st.success(f" Best fitness found in Generation {generation} ✅")
 
         # Store GA data in session state to persist across tabs
         st.session_state.schedule = schedule
@@ -86,7 +86,7 @@ if run_ga:
                                   "Venue Rest Period" : rest , "Match Duration" : match_duration}
 
 # tabs
-tab1, tab2  , tab3 = st.tabs(["📅 Schedule", "📊 Graphs" , "🧐Compare between Results"])
+tab1, tab2  , tab3 = st.tabs(["📅 Schedule", "📊 Graphs" , "🧐 Compare between Results"])
 
 # Tab 1: Schedule
 with tab1:

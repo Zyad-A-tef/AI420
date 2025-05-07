@@ -15,7 +15,7 @@ class GA:
                   initialization_approach = "random"):
         
         self.num_islands = 4
-        self.migration_rate = 0.4  # 10% of population migrates
+        self.migration_rate = 0.4  # 40% of population migrates
         self.migration_interval = 20  # every N generations
 
         ## added a random seed to ensure reproducible results every time
@@ -25,8 +25,8 @@ class GA:
         self.game_name = game_name
 
         self.num_of_teams = num_of_teams
-        self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
-        self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
+        self.num_of_venues = num_of_venues
+        self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 
         self.tournament_days = tournament_days
 
         self.match_duration = match_duration
@@ -38,7 +38,6 @@ class GA:
         
         self.match_duration = match_duration
         self.available_hours_per_day = daily_end_hr - daily_start_hr
-
 
         self.population_size = population_size
         self.generations = generations
@@ -87,6 +86,7 @@ class GA:
         
         self.teams_data = random.sample(team_names, self.num_of_teams)
 
+
     # Function to prepare venues data from venues saved data
     def prepare_venues_data(self):
         
@@ -109,11 +109,12 @@ class GA:
         
         self.venues_data = random.sample(venue_names, self.num_of_venues)
 
+
+    # Create Team and Venues Number
     def create_teams_and_venues(self):
 
         self.teams  = [i for i in range(self.num_of_teams)]
         self.venues = [i for i in range(self.num_of_venues)]
-
 
 
     # return type list of tuple(size 2)
@@ -128,7 +129,9 @@ class GA:
             fixtures.append(round_matches)
 
         return fixtures
+    
 
+    # initialize of Population
     def initialize_population(self):
         if self.initialization_approach == "random":
             self.random_initialize_population()
@@ -241,7 +244,7 @@ class GA:
             self.population.append(schedule)
 
 
-    ### Diversity Technqies (island split)        
+    # Diversity Technqies (island split)        
     def split_into_islands(self, population):
         island_size = len(population) // self.num_islands
         return [population[i*island_size:(i+1)*island_size] for i in range(self.num_islands)]
@@ -259,6 +262,7 @@ class GA:
             target[-num_migrants:] = migrants
             
 
+    # fitness Evaltuion
     def fitness_function(self, schedule):
         fitness = 0
         team_schedule = defaultdict(list)
@@ -269,7 +273,6 @@ class GA:
         for match, venue, day, start_hour in schedule:
             team1, team2 = match
             end_hour = start_hour + self.match_duration
-            ## [edit] plus not minus in logic
             day_counts[day] += 1
 
 
@@ -294,7 +297,6 @@ class GA:
             for current_day, current_start, current_end in venue_schedule[venue]:
                 if day == current_day and not (end_hour <= current_start or start_hour >= current_end):
                     fitness +=10
-            ## [edit] correct venue_schedule[venue] from Team_scheduleas
 
             venue_schedule[venue].append((day, start_hour, end_hour))
 
@@ -308,8 +310,7 @@ class GA:
         return fitness
 
 
-    ######### selection of Parents
-
+    # selection of Parents
     def tournament_selection(self, population, k=3):
 
         selected = random.sample(population, k)
@@ -326,9 +327,7 @@ class GA:
         return random.choices(population, weights=probability, k=1)[0]
 
 
-    ######### Crossover
-
-    # one point
+    # Crossover
     def one_point_crossover(self, parent1, parent2):
 
         point = random.randint(1, len(parent1) - 2)
@@ -336,14 +335,10 @@ class GA:
 
         return child
 
-
-    # Uniform Cross
-
-    # [Observe that unifrom get offspring near to parent to seach more to make more diversity]
     def uniform_crossover(self, parent1, parent2):
         child = []
         for gene1, gene2 in zip(parent1, parent2):
-            # Randomly select each field from one of the parents
+
             match = gene1[0]
             venue = random.choice([gene1[1], gene2[1]])
             day = random.choice([gene1[2], gene2[2]])
@@ -353,16 +348,10 @@ class GA:
         return child
 
 
-
-    ######### Mutation
-
-    # Swap Mutation
-
+    # Mutation
     def swap_mutation(self, individual):
         i, j = random.sample(range(len(individual)), 2)
         individual[i], individual[j] = individual[j], individual[i]
-
-    # Reschedule Mutation
 
     def reschedule_mutation(self, individual):
         index = random.randint(0, len(individual) - 1)
@@ -374,6 +363,8 @@ class GA:
 
         individual[index] = (match, new_venue, new_day, new_start_hour)
 
+
+    # Selection of Offspring
     def survivor_selection(self, population, offspring):
         
         combined = population + offspring
@@ -398,9 +389,7 @@ class GA:
             return combined[:self.population_size]
         
 
-
-    #### Decoding the schedule back into names ####
-
+    # Decoding the schedule back into names
     def DecodeToNames(self,schedule) : 
 
         decoded_schedule = []
@@ -422,98 +411,8 @@ class GA:
 
         return sorted_schedule
 
-    # def evolve(self):
-    #     if not self.population:
-    #         raise ValueError("Population failed to initialize")
-    #
-    #     best_fitness = float('inf')
-    #     best_schedule = None
-    #     # fitness_hist = []
-    #     generation_found = 0
-    #     no_improv_counter = 0
-    #
-    #     for generation in range(self.generations):
-    #         new_population = []
-    #
-    #         # Evaluation
-    #         fitness_values = [self.fitness_function(ind) for ind in self.population]
-    #         best_idx = min(range(len(fitness_values)), key=lambda i: fitness_values[i])
-    #         current_best_schedule = self.population[best_idx]
-    #         current_best_fitness = fitness_values[best_idx]
-    #
-    #         # Track best solution
-    #         if current_best_fitness < best_fitness:
-    #             best_fitness = current_best_fitness
-    #             best_schedule = current_best_schedule.copy()
-    #             generation_found = generation + 1
-    #             no_improv_counter = 0
-    #         else:
-    #             no_improv_counter += 1
-    #
-    #         self.fitness_history.append(current_best_fitness)
-    #
-    #         # Elitism
-    #         # new_population.append(current_best_schedule)
-    #
-    #         #controlled Elitism
-    #         # if random.random() < 0.5:
-    #         #     new_population.append(current_best_schedule)
-    #
-    #         print(f"Generation {generation + 1}: Best fitness: {current_best_fitness:.2f}")
-    #
-    #         # Early stopping
-    #         if no_improv_counter >= self.early_stopping:
-    #             print(f"Early stopping at generation {generation + 1} - no improvement")
-    #             break
-    #
-    #
-    #         #adaptive mutation rate
-    #         # if no_improv_counter > 10:
-    #         #     self.mutation_rate = min(self.mutation_rate * 1.1, 0.5)
-    #         # else:
-    #         #     self.mutation_rate = min(self.mutation_rate * 0.9, 0.01)
-    #
-    #
-    #         while len(new_population) < self.population_size:
-    #             # Selection
-    #             parent1 = (self.tournament_selection if self.selection_method == "tournament"
-    #                        else self.roulette_wheel_selection)(self.population)
-    #             parent2 = (self.tournament_selection if self.selection_method == "tournament"
-    #                        else self.roulette_wheel_selection)(self.population)
-    #
-    #             # Crossover
-    #             if random.random() < self.crossover_rate:
-    #                 if self.crossover_method == "uniform":
-    #                     child1 = self.uniform_crossover(parent1, parent2)
-    #                     child2 = self.uniform_crossover(parent2, parent1)
-    #                 else:
-    #                     child1 = self.one_point_crossover(parent1, parent2)
-    #                     child2 = self.one_point_crossover(parent2, parent1)
-    #             else:
-    #                 child1, child2 = parent1.copy(), parent2.copy()
-    #
-    #             # Mutation
-    #             for child in [child1, child2]:
-    #                 if random.random() < self.mutation_rate:
-    #                     (self.swap_mutation if self.mutation_method == "swap"
-    #                      else self.reschedule_mutation)(child)
-    #
-    #             new_population.extend([child1, child2])
-    #
-    #         # Survivor selection
-    #         self.population = self.survivor_selection(self.population, new_population[:self.population_size])
-    #
-    #
-    #
-    #         # Sort and decode the best schedule
-    #
-    #         decoded_schedule = self.DecodeToNames(best_schedule)
-    #
-    #
-    #
-    #
-    #     return decoded_schedule, best_fitness, generation_found
 
+    #Evolve Function
     def evolve(self):
         if not self.population:
             raise ValueError("Population failed to initialize")
@@ -592,16 +491,6 @@ class GA:
         return decoded_schedule, best_fitness, generation_found
 
 
-    def display(self):
-        for i, schedule in enumerate(self.population):
-            fitness = self.fitness_function(schedule)
-            print(f"Schedule {i+1} (fitness: {fitness:.2f})")
-            print("-"*20)
-            for match, venue, day, start_hour in schedule:
-                print(f"Day {day}: Match: {match[0]} vs {match[1]} at {venue} ({start_hour}:00)")
-            print("-" * 20)
-
-
     def display_with_names(self):
         for i, schedule in enumerate(self.population):
             fitness = self.fitness_function(schedule)
@@ -611,60 +500,6 @@ class GA:
                 print(f"Day {day}: Match: {self.get_team_name(match[0])} vs {self.get_team_name(match[1])} at {self.get_venue_name(venue)} ({start_hour}:00)")
             print("-" * 20)
 
-
- #### TEstinggggggg Selection of parent
-
-    def test_selection_methods(self):
-
-        print("\nTournament Selection\n")
-        selected1 = self.tournament_selection(self.population, k=3)
-        for match in selected1:
-            print(match)
-
-        print("\nRoulette Wheel Selection \n")
-        selected2 = self.roulette_wheel_selection(self.population)
-        for match in selected2:
-            print(match)
-
-
- #### TEstinggggggg Cross
-
-    def test_crossover(self):
-
-        parent1 = self.population[0]
-        parent2 = self.population[1]
-
-        print("\nParent 1:")
-        for gene in parent1: print(gene)
-        print("\nParent 2:")
-        for gene in parent2: print(gene)
-
-        print("\n Uniform Crossover \n")
-        child1 = self.uniform_crossover(parent1, parent2)
-        for gene in child1: print(gene)
-
-        print("\n One-Point Crossover \n")
-        child2 = self.one_point_crossover(parent1, parent2)
-        for gene in child2: print(gene)
-
-
- #### TEstinggggggg Cross
-    def test_mutation(self):
-        print("\n🧪 Testing Mutation Methods")
-
-        original = self.population[0].copy()
-        print("\nOriginal Individual:")
-        for gene in original: print(gene)
-
-        mutated_swap = original.copy()
-        self.swap_mutation(mutated_swap)
-        print("\n--- After Swap Mutation ---")
-        for gene in mutated_swap: print(gene)
-
-        mutated_reschedule = original.copy()
-        self.reschedule_mutation(mutated_reschedule)
-        print("\n--- After Reschedule Mutation ---")
-        for gene in mutated_reschedule: print(gene)
 
     # This function retrieves the team IDs for the two teams scheduled to play in a given match_id
     def get_match_teams(self, match_id):
@@ -687,18 +522,5 @@ class GA:
     # Function to get the name of a venue by it's ID
     def get_venue_name(self, venue_id = 0):
         return self.venues_data[venue_id]
-
-#  TODO: solve the problem of high convergence
-
-# ga = GA(num_of_teams=10, num_of_venues=3)
-# ga.display_with_names()
-# schedule, fitness, gen = ga.evolve()
-
-# print(ga.get_team_name(ga.get_teams_from_match(10)[0]) + " VS " + ga.get_team_name(ga.get_teams_from_match(10)[1]))
-# ga.test_selection_methods()
-# ga.test_crossover()
-# ga.test_mutation
-
-
 
 
