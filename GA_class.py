@@ -3,9 +3,9 @@ import random
 from collections import defaultdict
 
 class GA:
-    def __init__(self, num_of_teams, num_of_venues, population_size=100, generations=300, crossover_rate=0.8,
-                  mutation_rate=0.3, early_stopping=50, tournament_days=30, match_duration=2, daily_start_hr=8, daily_end_hr=23,
-                  max_matches_per_day=4,venue_rest=1, 
+    def __init__(self, num_of_teams, num_of_venues,tournament_days, match_duration,  max_matches_per_day, venue_rest,
+                 population_size=100, generations=300, crossover_rate=0.8,
+                  mutation_rate=0.3, early_stopping=50, daily_start_hr=8, daily_end_hr=23,
                   selection_method="tournament", 
                   crossover_method="uniform", 
                   mutation_method="swap",
@@ -25,17 +25,18 @@ class GA:
         self.num_of_teams = num_of_teams
         self.num_of_venues = num_of_venues # if num_of_venues else max(2, num_of_teams//2)
         self.num_of_rounds = (num_of_teams * (num_of_teams-1)) /2 # if num_of_teams %2 ==0 else num_of_teams
-        
+        self.tournament_days = tournament_days
+        self.match_duration = match_duration
+        self.max_matches_per_day = max_matches_per_day
+        self.venue_rest = venue_rest
+
         self.daily_start = daily_start_hr
         self.daily_end = daily_end_hr
         
         self.match_duration = match_duration
         self.available_hours_per_day = daily_end_hr - daily_start_hr
-        self.tournament_days = tournament_days
 
-        self.venue_rest = venue_rest
-        self.max_matches_per_day = max_matches_per_day
-        
+
         self.population_size = population_size
         self.generations = generations
         

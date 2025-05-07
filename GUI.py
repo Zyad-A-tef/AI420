@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from GA_class import GA
-from utilities import *
+from Utilities import *
 
 st.set_page_config(page_title="El Zozat's Tournament Scheduler", layout="centered")
 
 st.markdown("""
     <style>
-        .title {
+        .title {    
             font-size: 30px;
             text-align: center;
             line-height: 1.5;
@@ -24,8 +24,11 @@ st.markdown("""
 with st.sidebar:
     st.header("GA Settings 🤖")
     tournament_days = st.slider("Tournament Days", min_value=1, max_value=90, value=30)
-    num_teams = st.number_input("Number of teams", min_value=1, max_value=50, value=10)
-    num_venues = st.number_input("Number of venues", min_value=1, max_value=30, value=10)
+    match_duration = st.number_input("Match Duration", min_value=1, max_value=10, value=2)
+    rest = st.number_input("Venue Maintenance", min_value=1, max_value=20, value=1)
+    max_matches_per_day = st.number_input("Max Matches/Day", min_value=1, max_value=20, value=4)
+    num_teams = st.number_input("Number Of Teams", min_value=1, max_value=50, value=10)
+    num_venues = st.number_input("Number Of Venues", min_value=1, max_value=30, value=3)
     random_seed = st.number_input("Random Seed", min_value=0, max_value=10000000, value=42)
     selection_method = st.selectbox("Selection Method", ["tournament", "random"])
     crossover_method = st.selectbox("Crossover Method", ["uniform", "one_point"])
@@ -40,6 +43,9 @@ if run_ga:
             tournament_days=tournament_days,
             num_of_teams=num_teams,
             num_of_venues=num_venues,
+            match_duration=match_duration,
+            venue_rest=rest,
+            max_matches_per_day=max_matches_per_day,
             selection_method=selection_method,
             crossover_method=crossover_method,
             mutation_method=mutation_method,
@@ -60,7 +66,8 @@ if run_ga:
         st.session_state.input = {"Tournament Days":tournament_days , "Number of teams" : num_teams , "Number of venues":num_venues , 
                                   "Selection Method":selection_method ,"Crossover Method":crossover_method , 
                                   "Mutation Method":mutation_method ,"Survivor Method":survivor_method , 
-                                  "Random Seed":random_seed}
+                                  "Random Seed":random_seed , "Max number of matches per day" : max_matches_per_day,
+                                  "Venue Rest Period" : rest , "Match Duration" : match_duration}
 
 # tabs
 tab1, tab2  , tab3 = st.tabs(["📅 Schedule", "📊 Graphs" , "🧐Compare between Results"])
@@ -98,12 +105,17 @@ with tab3:
     
     # Only try to load if we have runs to compare
     run1, run2 = load_data_from_csv()
-    
+
+
     if run1 is not None and run2 is not None:
         # Display comparison only if we have valid data
         st.subheader("Side-by-Side Comparison")
 
+        best_fitness1 = float(run1['fitness'].min())  # Force single float
+        gene1 = int(run1['fitness'].idxmin()) + 1                 # Convert to 1-based as integer
 
+        best_fitness2 = float(run2['fitness'].min())  # Force single float
+        gene2 = int(run2['fitness'].idxmin()) + 1 
         # meta data 
 
         st.write("### Configuration")
@@ -119,9 +131,23 @@ with tab3:
         with sched_cols[0]:
             st.write("**Run 1**")
             st.table(run1['schedule'])
+            # Plot
+            plot_fitness_history(
+                fitness_data=run1['fitness'], 
+                best_fitness=best_fitness1,
+                best_gene=gene1,
+                title="Run 1 Fitness Evolution"
+            )
         with sched_cols[1]:
             st.write("**Run 2**")
             st.table(run2['schedule'])
+            # Plot
+            plot_fitness_history(
+                fitness_data=run2['fitness'], 
+                best_fitness=best_fitness2,
+                best_gene=gene2,
+                title="Run 2 Fitness Evolution"
+            )
         
         # Add a button to clear the comparison
         if st.button("Clear Comparison"):
