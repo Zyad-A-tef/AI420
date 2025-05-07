@@ -35,7 +35,7 @@ with st.sidebar:
     num_venues = st.number_input("Number Of Venues", min_value=1, max_value=30, value=3)
     random_seed = st.number_input("Random Seed", min_value=0, max_value=10000000, value=42)
 
-    initialization_approach = st.selectbox("Initialization Approach", ["random"])
+    initialization_approach = st.selectbox("Initialization Approach", ["random", "greedy"])
 
     selection_method = st.selectbox("Selection Method", ["tournament", "random"])
     crossover_method = st.selectbox("Crossover Method", ["uniform", "one_point"])

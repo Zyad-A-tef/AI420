@@ -133,6 +133,9 @@ class GA:
         if self.initialization_approach == "random":
             self.random_initialize_population()
 
+        elif self.initialization_approach == "greedy":
+            self.greedy_initialize_population()
+
         else:
             self.random_initialize_population()
     
@@ -157,6 +160,84 @@ class GA:
                     venue = random.choice(self.venues)
                     schedule.append((match,venue,day,start_hour))
 
+            self.population.append(schedule)
+
+    def greedy_initialize_population(self):
+        self.population = []
+        base_fixtures = self.generate_round_robin_fixtures()
+        
+        for _ in range(self.population_size):
+            schedule = []
+            # Initialize data structures to track usage
+            day_usage = {day: {'matches': 0, 'hours': set()} for day in range(1, self.tournament_days+1)}
+            venue_usage = {venue: {'last_day': 0, 'rest_days': self.venue_rest} for venue in self.venues}
+            
+            # Flatten all matches
+            all_matches = [match for round_matches in base_fixtures for match in round_matches]
+            
+            # Sort matches by some heuristic (e.g., team popularity, rivalry, etc.)
+            # Here we'll just shuffle to get different greedy solutions
+            random.shuffle(all_matches)
+            
+            for match in all_matches:
+                # Find best day and venue
+                best_day = None
+                best_venue = None
+                best_start = None
+                best_score = float('inf')
+                
+                # Try each day
+                for day in range(1, self.tournament_days+1):
+                    # Check day constraints
+                    if day_usage[day]['matches'] >= self.max_matches_per_day:
+                        continue
+                        
+                    # Try each venue
+                    for venue in self.venues:
+                        # Check venue rest period
+                        if venue_usage[venue]['last_day'] > 0 and \
+                        day - venue_usage[venue]['last_day'] < venue_usage[venue]['rest_days']:
+                            continue
+                            
+                        # Try possible start times
+                        for start_hour in range(self.daily_start, self.daily_end - self.match_duration + 1):
+                            # Check if time slot is available
+                            time_slot_conflict = False
+                            for hour in range(start_hour, start_hour + self.match_duration):
+                                if hour in day_usage[day]['hours']:
+                                    time_slot_conflict = True
+                                    break
+                            if time_slot_conflict:
+                                continue
+                                
+                            # Calculate a greedy score (lower is better)
+                            score = 0
+                            # Penalize days with many matches already
+                            score += day_usage[day]['matches'] * 2
+                            # Penalize venues that have been used recently
+                            if venue_usage[venue]['last_day'] > 0:
+                                score += max(0, 5 - (day - venue_usage[venue]['last_day']))
+                                
+                            if score < best_score:
+                                best_score = score
+                                best_day = day
+                                best_venue = venue
+                                best_start = start_hour
+                
+                if best_day is None:  # Couldn't find a valid slot - use random as fallback
+                    best_day = random.randint(1, self.tournament_days)
+                    best_venue = random.choice(self.venues)
+                    best_start = random.randint(self.daily_start, self.daily_end - self.match_duration)
+                    
+                # Add the match to schedule
+                schedule.append((match, best_venue, best_day, best_start))
+                
+                # Update usage trackers
+                day_usage[best_day]['matches'] += 1
+                for hour in range(best_start, best_start + self.match_duration):
+                    day_usage[best_day]['hours'].add(hour)
+                venue_usage[best_venue]['last_day'] = best_day
+                
             self.population.append(schedule)
 
 
