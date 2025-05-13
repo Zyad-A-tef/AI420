@@ -408,15 +408,15 @@ class GA:
             game = dict()
             teams , venue_id , day , hour = match
 
-            game['team1'] = self.get_team_name(teams[0])
-            game['team2'] = self.get_team_name(teams[1])
-            game['venue'] = self.get_venue_name(venue_id)
-            game['day']   = day
-            game['hour']  = hour
+            game['Team 1'] = self.get_team_name(teams[0])
+            game['Team 2'] = self.get_team_name(teams[1])
+            game['Venue'] = self.get_venue_name(venue_id)
+            game['Day']   = day
+            game['Hour']  = hour
 
             decoded_schedule.append(game)
         
-        sorted_schedule = sorted(decoded_schedule, key=lambda x: (x['day'], x['hour']))
+        sorted_schedule = sorted(decoded_schedule, key=lambda x: (x['Day'], x['Hour']))
 
         return sorted_schedule
 

@@ -4,20 +4,22 @@ import matplotlib.pyplot as plt
 from GA_class import GA
 from Utilities import *
 
-st.set_page_config(page_title="El Zozat's Tournament Scheduler", layout="centered")
+st.set_page_config(page_title="El Zowzat's Tournament Scheduler", layout="wide")
 
 st.markdown("""
     <style>
         .title {    
-            font-size: 30px;
+            font-size: 46px;
             text-align: center;
             line-height: 1.5;
+            margin-bottom: 20px;
+            font-weight: bold;
         }
         .tab-container {
             margin-top: 20px;
         }
     </style>
-    <div class="title">🚀 Welcome To El Zozat's Tournament Scheduler 👾</div>
+    <div class="title">Welcome To El Zowzat's Tournament Scheduler 👾</div>
 """, unsafe_allow_html=True)
 
 
@@ -25,7 +27,7 @@ with st.sidebar:
     st.header("GA Settings 🤖")
     tournament_days = st.slider("Tournament Days", min_value=1, max_value=90, value=30)
     
-    game_name = st.selectbox("Game Name", ["champions_league", "NBA"])
+    game_name = {"Champions League": "champions_league", "NBA": "nba"}[st.selectbox("Game Name", ["Champions League", "NBA"])]
     
     match_duration = st.number_input("Match Duration", min_value=1, max_value=10, value=2)
     rest = st.number_input("Venue Maintenance", min_value=1, max_value=20, value=1)
@@ -35,12 +37,12 @@ with st.sidebar:
     num_venues = st.number_input("Number Of Venues", min_value=1, max_value=30, value=3)
     random_seed = st.number_input("Random Seed", min_value=0, max_value=10000000, value=42)
 
-    initialization_approach = st.selectbox("Initialization Approach", ["random", "greedy"])
+    initialization_approach = {"Random": "random", "Greedy": "greedy"}[st.selectbox("Initialization Approach", ["Random", "Greedy"])]
 
-    selection_method = st.selectbox("Selection Method", ["tournament", "random"])
-    crossover_method = st.selectbox("Crossover Method", ["uniform", "one_point"])
-    mutation_method = st.selectbox("Mutation Method", ["swap", "reschedule"])
-    survivor_method = st.selectbox("Survivor Method", ["steady-state", "generational", "elitism", "(μ + λ) selection"])
+    selection_method = {"Tournament": "tournament", "Roulette Wheel": "random"}[st.selectbox("Selection Method", ["Tournament", "Roulette Wheel"])]
+    crossover_method = {"Uniform": "uniform", "One-Point": "one-point"}[st.selectbox("Crossover Method", ["Uniform", "One-Point"])]
+    mutation_method = {"Reschedule": "reschedule", "Swap": "swap"}[st.selectbox("Mutation Method", ["Reschedule", "Swap"])]
+    survivor_method = {"Steady-State": "steady-state", "Generational": "generational", "Elitism": "elitism", "(μ + λ) selection": "default"}[st.selectbox("Survivor Method", ["Steady-State", "Generational", "Elitism", "(μ + λ) selection"])]
     
     run_ga = st.button("Run GA")
 
