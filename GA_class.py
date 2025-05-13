@@ -370,9 +370,18 @@ class GA:
         combined = population + offspring
         
         if self.survivor_method == "elitism":
-            # Keep top-N best individuals
-            combined.sort(key = lambda ind: self.fitness_function(ind))
-            return combined[:self.population_size]
+            # Preserve top N elite individuals from current population
+            num_elites = max(1, int(0.1 * self.population_size))  # 10% elitism, at least 1
+
+            # Sort current population by fitness (assumes lower is better)
+            population.sort(key=lambda ind: self.fitness_function(ind))
+            elites = population[:num_elites]
+
+            # Sort offspring by fitness and take the best to fill the rest
+            offspring.sort(key=lambda ind: self.fitness_function(ind))
+            survivors = elites + offspring[:self.population_size - num_elites]
+
+            return survivors
             
         elif self.survivor_method == "generational":
             # Replace entire population with offspring
