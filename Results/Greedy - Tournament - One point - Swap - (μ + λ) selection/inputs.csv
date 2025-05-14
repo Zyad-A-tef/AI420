@@ -1,0 +1,2 @@
+Tournament Days,Number of teams,Number of venues,Initialization Approach,Selection Method,Crossover Method,Mutation Method,Survivor Method,Random Seed,Max number of matches per day,Venue Rest Period,Match Duration
+30,10,3,greedy,tournament,uniform,reschedule,default,42,4,1,2

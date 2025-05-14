@@ -37,9 +37,9 @@ with st.sidebar:
     num_venues = st.number_input("Number Of Venues", min_value=1, max_value=30, value=3)
     random_seed = st.number_input("Random Seed", min_value=0, max_value=10000000, value=42)
 
-    initialization_approach = {"Random": "random", "Greedy": "greedy"}[st.selectbox("Initialization Approach", ["Random", "Greedy"])]
+    initialization_approach = {"Random": "random", "Greedy": "greedy"}[st.selectbox("Initialization Approach", ["Greedy", "Random"])]
 
-    selection_method = {"Tournament": "tournament", "Roulette Wheel": "random"}[st.selectbox("Selection Method", ["Tournament", "Roulette Wheel"])]
+    selection_method = {"Tournament": "tournament", "Roulette Wheel": "roulette-Wheel"}[st.selectbox("Selection Method", ["Tournament", "Roulette Wheel"])]
     crossover_method = {"Uniform": "uniform", "One-Point": "one-point"}[st.selectbox("Crossover Method", ["Uniform", "One-Point"])]
     mutation_method = {"Reschedule": "reschedule", "Swap": "swap"}[st.selectbox("Mutation Method", ["Reschedule", "Swap"])]
     survivor_method = {"Steady-State": "steady-state", "Generational": "generational", "Elitism": "elitism", "(μ + λ) selection": "default"}[st.selectbox("Survivor Method", ["Steady-State", "Generational", "Elitism", "(μ + λ) selection"])]
