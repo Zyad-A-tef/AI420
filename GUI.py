@@ -167,13 +167,6 @@ with tab3:
                 title="Run 2 Fitness Evolution"
             )
         
-        # Add a button to clear the comparison
-        # if st.button("Clear Comparison"):
-        #     for key in ["compared_run1", "compared_run2", "show_comparison"]:
-        #         if key in st.session_state:
-        #             del st.session_state[key]
-        #     st.rerun()
-
 
         if st.button("Clear Comparison"):
             clear_compared_data()

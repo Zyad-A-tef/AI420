@@ -272,7 +272,7 @@ class GA:
 
         for match, venue, day, start_hour in schedule:
             team1, team2 = match
-            end_hour = start_hour + self.match_duration
+            end_hour = start_hour + self.match_duration + self.venue_rest
             day_counts[day] += 1
 
 
@@ -295,7 +295,7 @@ class GA:
 
             # venue double booking
             for current_day, current_start, current_end in venue_schedule[venue]:
-                if day == current_day and not (end_hour <= current_start or start_hour >= current_end):
+                if day == current_day and not (end_hour < current_start or start_hour >= current_end):
                     fitness +=10
 
             venue_schedule[venue].append((day, start_hour, end_hour))
@@ -500,29 +500,14 @@ class GA:
         return decoded_schedule, best_fitness, generation_found
 
 
-    def display_with_names(self):
-        for i, schedule in enumerate(self.population):
-            fitness = self.fitness_function(schedule)
-            print(f"Schedule {i+1} (fitness: {fitness:.2f})")
-            print("-"*20)
-            for match, venue, day, start_hour in schedule:
-                print(f"Day {day}: Match: {self.get_team_name(match[0])} vs {self.get_team_name(match[1])} at {self.get_venue_name(venue)} ({start_hour}:00)")
-            print("-" * 20)
-
-
-    # This function retrieves the team IDs for the two teams scheduled to play in a given match_id
-    def get_match_teams(self, match_id):
-
-        if(match_id >= self.num_of_rounds):
-            raise ValueError(f"Maximum match_id is {self.num_of_rounds -1}")
-
-        now = 0
-        for i in range(self.num_of_teams):
-            for j in range(i+1, self.num_of_teams):
-                if(match_id == now):
-                    return (i, j)
-                else:
-                    now = now + 1
+    # def display_with_names(self):
+    #     for i, schedule in enumerate(self.population):
+    #         fitness = self.fitness_function(schedule)
+    #         print(f"Schedule {i+1} (fitness: {fitness:.2f})")
+    #         print("-"*20)
+    #         for match, venue, day, start_hour in schedule:
+    #             print(f"Day {day}: Match: {self.get_team_name(match[0])} vs {self.get_team_name(match[1])} at {self.get_venue_name(venue)} ({start_hour}:00)")
+    #         print("-" * 20)
                     
     # Function to get the name of a team by it's ID
     def get_team_name(self, team_id):
