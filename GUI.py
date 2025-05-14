@@ -26,8 +26,8 @@ st.markdown("""
 with st.sidebar:
     st.header("GA Settings 🤖")
     tournament_days = st.slider("Tournament Days", min_value=1, max_value=90, value=30)
-    
-    game_name = {"Champions League": "champions_league", "NBA": "nba"}[st.selectbox("Game Name", ["Champions League", "NBA"])]
+
+    # game_name = {"Champions League": "champions_league", "NBA": "nba"}[st.selectbox("Game Name", ["Champions League", "NBA"])]
     
     match_duration = st.number_input("Match Duration", min_value=1, max_value=10, value=2)
     rest = st.number_input("Venue Maintenance", min_value=1, max_value=20, value=1)
@@ -66,8 +66,8 @@ if run_ga:
             mutation_method         = mutation_method,
             survivor_method         = survivor_method,
             random_seed             = random_seed,
-                
-            game_name               =  game_name
+
+            # game_name               =  game_name
         )
 
         schedule, best_fitness, generation = ga.evolve()
@@ -80,7 +80,7 @@ if run_ga:
         st.session_state.generation = generation
 
         # save inputs into session 
-        st.session_state.input = {"Game Name": game_name, "Tournament Days":tournament_days , "Number of teams" : num_teams , "Number of venues":num_venues ,
+        st.session_state.input = {"Tournament Days":tournament_days , "Number of teams" : num_teams , "Number of venues":num_venues ,
                                   "Initialization Approach" : initialization_approach, 
                                   "Selection Method":selection_method ,"Crossover Method":crossover_method , 
                                   "Mutation Method":mutation_method ,"Survivor Method":survivor_method , 
@@ -168,10 +168,13 @@ with tab3:
             )
         
         # Add a button to clear the comparison
+        # if st.button("Clear Comparison"):
+        #     for key in ["compared_run1", "compared_run2", "show_comparison"]:
+        #         if key in st.session_state:
+        #             del st.session_state[key]
+        #     st.rerun()
+
+
         if st.button("Clear Comparison"):
-            if "compared_run1" in st.session_state:
-                del st.session_state.compared_run1
-            if "compared_run2" in st.session_state:
-                del st.session_state.compared_run2
-            st.session_state.show_comparison = False
-            st.experimental_rerun()
+            clear_compared_data()
+            st.rerun()

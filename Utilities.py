@@ -136,6 +136,13 @@ def plot_fitness_history(fitness_data, best_fitness, best_gene, title="Fitness E
     st.pyplot(plt.gcf())
 
 
+def clear_compared_data():
+    for key in ["compared_run1", "compared_run2", "show_comparison"]:
+        if key in st.session_state:
+            del st.session_state[key]
+    st.session_state["comparison_cleared"] = True
+
+
 ### testing 
 
 
